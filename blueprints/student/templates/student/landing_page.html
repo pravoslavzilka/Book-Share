@@ -52,8 +52,39 @@
                     </div>
                 </a>
             {% endfor %}
+            <a href="{{ url_for('student_bp.landing_page') }}" class="grade-link">
+                <div class="card center" style="margin:10px;">
+                  <div class="card-body">
+                    All
+                  </div>
+                </div>
+            </a>
         </div>
     </div>
+
+
+    <div style="margin:30px;" class="d-flex justify-content-center">
+			<div class="collapse " id="collapseExample2">
+			  <div class="card card-body ">
+                <strong class="" style="padding-bottom:5px;font-size: 18px;">New student:</strong>
+			    <form class="form-inline needs-validation" action="{{url_for('student_bp.new_student')}}" method="post" style="margin-top:10px;">
+				  <input name="student_name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Name" required>
+                    <select class="form-control" name="grade" style="margin-right:10px;margin-bottom:10px;">
+                      {% for grade in grades %}
+                        <option>{{ grade.name }}</option>
+                      {% endfor %}
+                    </select>
+                  <button type="submit" class="btn btn-primary mb-2">Add</button>
+				</form>
+			  </div>
+			</div>
+
+		</div>
+        <div class="d-flex justify-content-center">
+			  <button id="add-student" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+			    + Add new Student
+			  </button>
+			</div>
 
 
     <div class="container" style="padding-top:60px;">
@@ -93,6 +124,17 @@
             });
           });
         });
+
+     $(document).ready(function(){
+	 $('#add-student').on('click', function () {
+	  var text=$('#add-student').text();
+	  if(text === "- Add Student"){
+	    $(this).html('+ Add Student');
+	  } else{
+	    $(this).text('- Add Student');
+	 }
+	});
+	});
     </script>
 
 {% endblock content %}
