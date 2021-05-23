@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from blueprints.admin.__init__ import admin_bp
 from blueprints.student.__init__ import student_bp
+from blueprints.book.__init__ import book_bp
 from database import db_session
 from flask_login import LoginManager
 from models import User
@@ -11,6 +12,7 @@ app = Flask(__name__)
 
 app.register_blueprint(admin_bp,url_prefix="/admin")
 app.register_blueprint(student_bp,url_prefix="/student")
+app.register_blueprint(book_bp,url_prefix="/book")
 
 app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(16)
 
