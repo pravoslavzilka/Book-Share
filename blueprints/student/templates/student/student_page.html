@@ -53,9 +53,13 @@
                         <div id="grade-form">
                             <form method="post" action="{{ url_for('student_bp.change_grade',student_id=student.id) }}" class="form-inline needs-validation">
                                 <img class="img-grade" style="height:37px;margin-bottom:5px;margin-right:5px;" src="{{url_for('static',filename='images/class_icon.jpg')}}">
-                                <select style="margin-left:10px;" class="form-control" name="grade" required>
+                                <select style="margin-left:10px;" ="{{student.grade.name}}" class="form-control" name="grade" required>
                                   {% for grade in grades %}
-                                    <option>{{ grade.name }}</option>
+                                    {% if grade == student.grade %}
+                                        <option selected>{{ grade.name }}</option>
+                                    {% else %}
+                                        <option>{{ grade.name }}</option>
+                                    {% endif %}
                                   {% endfor %}
                                 </select>
                               <span class="grade-buttons" style="margin-left:25px;">

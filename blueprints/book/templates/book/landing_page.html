@@ -68,7 +68,7 @@
 
 
     <div style="margin:30px;" class="d-flex justify-content-center">
-			<div class="collapse " id="collapseExample2">
+			<div class="collapse " id="add-book">
 			  <div class="card card-body ">
                 <strong class="" style="padding-bottom:5px;font-size: 18px;">New book:</strong>
 			    <form class="form-inline needs-validation" action="{{ url_for('book_bp.add_book') }}" method="post" style="margin-top:10px;">
@@ -84,9 +84,24 @@
 			</div>
 
 		</div>
+        <div style="margin:30px;" class="d-flex justify-content-center">
+			<div class="collapse " id="add-book-type">
+			  <div class="card card-body ">
+                <strong class="" style="padding-bottom:5px;font-size: 18px;">New book type:</strong>
+			    <form class="form-inline needs-validation" action="{{ url_for('book_bp.add_book_type') }}" method="post" style="margin-top:10px;">
+				  <input name="book_type"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Book Type">
+                  <button type="submit" class="btn btn-primary mb-2">Add</button>
+				</form>
+			  </div>
+			</div>
+
+		</div>
         <div class="d-flex justify-content-center">
-		  <button id="add-student" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+		  <button id="add-book-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book" aria-expanded="false" aria-controls="add-book">
 		    + Add new Book
+		  </button>
+          <button style="margin-left:10px;" id="add-book-type-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book-type" aria-expanded="false" aria-controls="add-book-type">
+		    + Add new Book Type
 		  </button>
 		</div>
 
@@ -140,12 +155,23 @@
         });
 
      $(document).ready(function(){
-	 $('#add-student').on('click', function () {
-	  var text=$('#add-student').text();
+	 $('#add-book-b').on('click', function () {
+	  var text=$('#add-book-b').text();
 	  if(text === "- Add Book"){
 	    $(this).html('+ Add Book');
 	  } else{
 	    $(this).text('- Add Book');
+	 }
+	});
+	});
+
+	$(document).ready(function(){
+	 $('#add-book-type-b').on('click', function () {
+	  var text=$('#add-book-type-b').text();
+	  if(text === "- Add new Book Type"){
+	    $(this).html('+ Add new Book Type');
+	  } else{
+	    $(this).text('- Add new Book Type');
 	 }
 	});
 	});

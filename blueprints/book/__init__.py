@@ -50,3 +50,19 @@ def delete_book(book_id):
     db_session.commit()
     flash("Book deleted successfully","danger")
     return redirect(url_for("book_bp.landing_page"))
+
+
+@book_bp.route("/add_type/",methods=["POST"])
+def add_book_type():
+    req_bt = request.form["book_type"]
+    book_type = BookType.query.filter(BookType.name == req_bt).first()
+    if book_type:
+        flash("This book type already exist","danger")
+        return redirect(url_for("book_bp.landing_page"))
+
+    new_bt = BookType(req_bt)
+    db_session.add(new_bt)
+    db_session.commit()
+
+    flash("New book type successfully added", "success")
+    return redirect(url_for("book_bp.landing_page"))
