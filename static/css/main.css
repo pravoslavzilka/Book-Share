@@ -29,8 +29,14 @@
 #footer-lop {
   background-color:black;
 }
+
 .footer a {
     color:white;
+}
+
+.footer a:hover {
+    color:white;
+    text-decorator:none;
 }
 
 /* Other Classes for Page Styling */

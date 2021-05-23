@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <div class="container" style="padding-top:50px;">
+    <div class="container" style="padding-top:40px;">
         <div class="row d-flex justify-content-center">
             {% for grade in grades %}
                 <a href="{{ url_for('student_bp.landing_page_grade',grade=grade.name) }}" class="grade-link">
@@ -68,8 +68,8 @@
 			  <div class="card card-body ">
                 <strong class="" style="padding-bottom:5px;font-size: 18px;">New student:</strong>
 			    <form class="form-inline needs-validation" action="{{url_for('student_bp.new_student')}}" method="post" style="margin-top:10px;">
-				  <input name="student_name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Name" required>
-                    <select class="form-control" name="grade" style="margin-right:10px;margin-bottom:10px;">
+				  <input name="student_name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Name">
+                    <select class="form-control" name="grade" style="margin-right:10px;margin-bottom:10px;" required>
                       {% for grade in grades %}
                         <option>{{ grade.name }}</option>
                       {% endfor %}
@@ -81,10 +81,62 @@
 
 		</div>
         <div class="d-flex justify-content-center">
-			  <button id="add-student" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
-			    + Add new Student
-			  </button>
-			</div>
+		  <button id="add-student" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+		    + Add new Student
+		  </button>
+		</div>
+
+
+        <div class="modal fade" id="ar_u_s" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are you sure ?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                After moving all students up in grade, students in  grade Oktava, 4.A and 4.B will be deleted  automatically.
+              </div>
+              <div class="modal-footer">
+                <a type="button" href="{{ url_for('student_bp.move_all_s_up') }}" class="btn btn-primary">Ok</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="ar_u_s_2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Are you sure ?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                After moving all students down in grade, students in  grade Prima, 1.A and 1.B will be deleted  automatically.
+              </div>
+              <div class="modal-footer">
+                <a type="button" href="{{ url_for('student_bp.move_all_s_down') }}" class="btn btn-primary">Ok</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-center" style="margin-top:20px;">
+		  <button class="btn btn-success" type="button" data-toggle="modal" data-target="#ar_u_s">
+		    Move all students up
+		  </button>
+          <button class="btn btn-secondary" type="button" style="margin-left:10px;" data-toggle="modal" data-target="#ar_u_s_2">
+		    Move all students down
+		  </button>
+		</div>
+
+
 
 
     <div class="container" style="padding-top:60px;">

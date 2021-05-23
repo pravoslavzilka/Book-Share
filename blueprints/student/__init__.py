@@ -17,7 +17,6 @@ def landing_page():
 def landing_page_grade(grade):
     grades = Grade.query.all()
     cer_grade = Grade.query.filter(Grade.name == grade).first()
-    print(cer_grade)
     return render_template("student/landing_page.html", grades=grades, students=cer_grade.students)
 
 
@@ -29,4 +28,50 @@ def new_student():
     n_student = Student(name,grade)
     db_session.add(n_student)
     db_session.commit()
+    return redirect(url_for("student_bp.landing_page"))
+
+
+@student_bp.route("/move_all_students_up/")
+def move_all_s_up():
+
+    grades = ["Prima", "Sekunda", "Tercia", "Kvarta", "Kvinta", "Sexta", "Septima", "Oktava",
+              "1.A","2.A","3.A","4.A",
+              "1.B", "2.B", "3.B","4.B"
+              ]
+    final_grades = ["Oktava","4.A","4.B"]
+    students = Student.query.all()
+
+    for student in students:
+        if student.grade.name in final_grades:
+            db_session.delete(student)
+            db_session.commit()
+            continue
+        index = grades.index(student.grade.name)
+        new_grade = Grade.query.filter(Grade.name == grades[index+1]).first()
+        student.grade = new_grade
+        db_session.commit()
+
+    return redirect(url_for("student_bp.landing_page"))
+
+
+@student_bp.route("/move_all_students_down/")
+def move_all_s_down():
+
+    grades = ["Prima", "Sekunda", "Tercia", "Kvarta", "Kvinta", "Sexta", "Septima", "Oktava",
+              "1.A","2.A","3.A","4.A",
+              "1.B", "2.B", "3.B","4.B"
+              ]
+    final_grades = ["Prima","1.A","1.B"]
+    students = Student.query.all()
+
+    for student in students:
+        if student.grade.name in final_grades:
+            db_session.delete(student)
+            db_session.commit()
+            continue
+        index = grades.index(student.grade.name)
+        new_grade = Grade.query.filter(Grade.name == grades[index-1]).first()
+        student.grade = new_grade
+        db_session.commit()
+
     return redirect(url_for("student_bp.landing_page"))
