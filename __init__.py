@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from blueprints.admin.__init__ import admin_bp
 from blueprints.student.__init__ import student_bp
 from blueprints.book.__init__ import book_bp
@@ -26,7 +26,7 @@ login_manager.login_message_category = "info"
 
 @app.route("/")
 def welcome_page():
-    return render_template("index.html")
+    return redirect(url_for("student_bp.landing_page"))
 
 
 @app.teardown_appcontext
@@ -40,4 +40,4 @@ def load_user(user_id):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    app.run()
