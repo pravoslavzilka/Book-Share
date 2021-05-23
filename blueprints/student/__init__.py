@@ -1,6 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from database import db_session
-from models import Grade, Student
+from models import Grade, Student, Book
 
 
 student_bp = Blueprint("student_bp",__name__,template_folder="templates")
@@ -28,6 +28,7 @@ def new_student():
     n_student = Student(name,grade)
     db_session.add(n_student)
     db_session.commit()
+    flash("New user successfully added", "success")
     return redirect(url_for("student_bp.landing_page"))
 
 
@@ -51,6 +52,7 @@ def move_all_s_up():
         student.grade = new_grade
         db_session.commit()
 
+    flash("All students were moved up in a grade", "success")
     return redirect(url_for("student_bp.landing_page"))
 
 
@@ -74,4 +76,79 @@ def move_all_s_down():
         student.grade = new_grade
         db_session.commit()
 
+    flash("All students were moved down in a grade", "success")
     return redirect(url_for("student_bp.landing_page"))
+
+
+@student_bp.route("/view/<int:student_id>/")
+def view_student(student_id):
+
+    student = Student.query.filter(Student.id == student_id).first()
+    grades = Grade.query.all()
+
+    return render_template("student/student_page.html",student=student, grades=grades)
+
+
+@student_bp.route("/change_grade/for/<int:student_id>/",methods=["POST"])
+def change_grade(student_id):
+
+    new_grade = Grade.query.filter(Grade.name == request.form["grade"]).first()
+    student = Student.query.filter(Student.id == student_id).first()
+
+    student.grade = new_grade
+    db_session.commit()
+    flash("Grade changed successfully", "success")
+    return redirect(url_for("student_bp.view_student",student_id=student_id))
+
+
+@student_bp.route("/<int:student_id>/rent_book/",methods=["POST"])
+def rent_book(student_id):
+
+    book = Book.query.filter(Book.code == int(request.form["code"])).first()
+    if book:
+        if book.student:
+            flash("Book with this code is already in use","danger")
+        else:
+            student = Student.query.filter(Student.id == student_id).first()
+            student.books.append(book)
+            db_session.commit()
+            flash("Book rented successfully", "success")
+    else:
+        flash("No book with this code !","danger")
+    return redirect(url_for("student_bp.view_student",student_id=student_id))
+
+
+@student_bp.route("/<int:student_id>/return_book/<int:book_id>/")
+def return_book(student_id,book_id):
+
+    book = Book.query.filter(Book.id == book_id).first()
+    student = Student.query.filter(Student.id == student_id).first()
+
+    student.books.remove(book)
+    db_session.commit()
+    flash("Book returned successfully","success")
+
+    return redirect(url_for("student_bp.view_student",student_id=student_id))
+
+
+@student_bp.route("/<int:student_id>/return_all/")
+def return_all(student_id):
+
+    student = Student.query.filter(Student.id == student_id).first()
+
+    student.books.clear()
+    db_session.commit()
+    flash("All books returned successfully","success")
+
+    return redirect(url_for("student_bp.view_student",student_id=student_id))
+
+
+@student_bp.route("/delete/<int:student_id>/")
+def delete_student(student_id):
+    student = Student.query.filter(Student.id == student_id).first()
+    db_session.delete(student)
+    db_session.commit()
+    flash("Student deleted successfully","success")
+    return redirect(url_for("student_bp.landing_page"))
+
+
