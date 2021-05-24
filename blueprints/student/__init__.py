@@ -152,3 +152,9 @@ def delete_student(student_id):
     return redirect(url_for("student_bp.landing_page"))
 
 
+@student_bp.route("/generate/form/")
+def generate_form():
+
+    return render_template("student/student_add_form")
+
+
