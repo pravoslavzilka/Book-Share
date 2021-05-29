@@ -66,3 +66,23 @@ def add_book_type():
 
     flash("New book type successfully added", "success")
     return redirect(url_for("book_bp.landing_page"))
+
+
+@book_bp.route("/generate/form/<int:count>/")
+def generate_form(count):
+    book_types = BookType.query.all()
+    return render_template("book/book_add_form.html",count=count,book_types=book_types)
+
+
+@book_bp.route("add/multiple/<int:count>/",methods=["POST"])
+def add_multiple_book(count):
+    book_type = BookType.query.filter(BookType.name == request.form["book_type"]).first()
+
+    for i in range(count):
+        code = request.form["book_code" + str(i)]
+        b = Book(code,book_type)
+        db_session.add(b)
+        db_session.commit()
+
+    flash(str(count) + " books added successfully","success")
+    return redirect(url_for("book_bp.landing_page"))

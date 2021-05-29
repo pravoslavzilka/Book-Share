@@ -152,9 +152,43 @@ def delete_student(student_id):
     return redirect(url_for("student_bp.landing_page"))
 
 
-@student_bp.route("/generate/form/")
-def generate_form():
+@student_bp.route("/search_student/")
+def search_student():
+    return render_template("student/search_student.html")
 
-    return render_template("student/student_add_form")
+
+@student_bp.route("/search_student/",methods=["POST"])
+def search_student2():
+    student_code = request.form["student_code"]
+    student = Student.query.filter(Student.code == student_code).first()
+    if student:
+        return redirect(url_for("student_bp.view_student",student_id=student.id))
+
+    flash("No student with this code !","danger")
+    return render_template("student/search_student.html")
+
+
+@student_bp.route("/generate/form/",methods=["POST"])
+def generate_form():
+    count = int(request.form["count"])
+    sl_grade = request.form["grade"]
+    grades = Grade.query.all()
+    return render_template("student/student_add_form.html",count=count,grades=grades,sl_grade=sl_grade)
+
+
+@student_bp.route("add/multiple/<int:count>/",methods=["POST"])
+def add_mul_student(count):
+    grade = Grade.query.filter(Grade.name == request.form["grade"]).first()
+
+    for i in range(count):
+        name = request.form["student" + str(i)]
+        code = request.form["student_code" + str(i)]
+
+        s = Student(name,grade,code)
+        db_session.add(s)
+        db_session.commit()
+
+    flash(str(count) + " students added successfully", "success")
+    return redirect(url_for("student_bp.landing_page"))
 
 

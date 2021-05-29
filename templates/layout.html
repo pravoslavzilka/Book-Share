@@ -4,6 +4,10 @@
 
     <!-- META DATA -->
     <meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="robots" content="noodp, max-image-preview:large">
 
     <!-- TITLE INFO -->
     <title>{% block title %}{% endblock title%}</title>
@@ -45,6 +49,9 @@
           </li>
           <li class="links-items nav-item">
             <a class="nav-link" id="book" href="{{ url_for('book_bp.landing_page') }}">Books</a>
+          </li>
+		  <li class="links-items nav-item">
+            <a class="nav-link" id="find-student" href="{{ url_for('student_bp.search_student') }}">Search student</a>
           </li>
 
         </ul>

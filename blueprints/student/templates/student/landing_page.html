@@ -84,8 +84,8 @@
 			<div class="collapse " id="add-m-student">
 			  <div class="card card-body ">
                 <strong class="" style="padding-bottom:5px;font-size: 18px;">How many ?</strong>
-			    <form class="form-inline needs-validation" action="{{url_for('student_bp.new_student')}}" method="post" style="margin-top:10px;">
-				  <input name="num" type="text" class="form-control mb-2 mr-sm-2" placeholder="Count">
+			    <form class="form-inline needs-validation" action="{{url_for('student_bp.generate_form')}}" method="post" style="margin-top:10px;">
+				  <input name="count" type="number" class="form-control mb-2 mr-sm-2" placeholder="Count" required>
                     <select class="form-control" name="grade" style="margin-right:10px;margin-bottom:10px;" required>
                       {% for grade in grades %}
                         <option>{{ grade.name }}</option>

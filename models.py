@@ -41,14 +41,16 @@ class Student(Base):
     __tablename__ = 'student'
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
+    code = Column(Integer, unique=True)
     grade_id = Column(Integer, ForeignKey('grade.id'))
 
     grade = relationship("Grade", back_populates="students", foreign_keys=[grade_id])
     books = relationship("Book", back_populates="student", foreign_keys="[Book.student_id]")
 
-    def __init__(self,name=None,grade=None):
+    def __init__(self,name=None,grade=None,code=None):
         self.name = name
         self.grade = grade
+        self.code = code
 
 
 class Grade(Base):

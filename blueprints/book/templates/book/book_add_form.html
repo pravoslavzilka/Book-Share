@@ -9,7 +9,7 @@
     <script>
 		$(document).ready(function(){
   		 	$(".active").removeClass("active");
-  		 	$("#student").addClass("active");
+  		 	$("#book").addClass("active");
 		});
 	</script>
 
@@ -43,12 +43,12 @@
                 <h2>Grade</h2>
                 <div class="card" style="margin:30px;">
 	              <div class="card-body">
-                      <form method="post" action="{{ url_for('student_bp.add_mul_student',count=count) }}" class="form-inline needs-validation">
+                      <form method="post" action="{{ url_for('book_bp.add_multiple_book',count=count) }}" class="form-inline needs-validation">
                           <img class="img-grade" style="height:37px;margin-bottom:5px;margin-right:5px;" src="{{url_for('static',filename='images/class_icon.jpg')}}">
 
-                          <select name="grade" style="margin-left:50px;">
-                              {% for grade in grades %}
-                                <option>{{ grade.name }}</option>
+                          <select name="book_type" style="margin-left:50px;">
+                              {% for book_type in book_types %}
+                                <option>{{ book_type.name }}</option>
                               {% endfor %}
                           </select>
                           <div>
@@ -56,11 +56,9 @@
                           </div>
                           {% for i in range(count) %}
                             <div>
-                                <input type="text" placeholder="name" name="student{{i}}">
-                                <input type="number" placeholder="code" name="student_code{{i}}">
+                                <input type="number" placeholder="code" name="book_code{{i}}">
                             </div>
                           {% endfor %}
-                        </span>
                         <input type="submit">
                       </form>
 	              </div>
