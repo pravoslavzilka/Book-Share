@@ -43,12 +43,29 @@ def add_book():
     return redirect(url_for("book_bp.landing_page"))
 
 
+@book_bp.route("/return/",methods=["POST"])
+def return_book():
+    code = int(request.form["book_code"])
+    book = Book.query.filter(Book.code == code).first()
+
+    if book:
+        if book.student:
+            student = Student.query.filter(Student.id == book.student.id).first()
+            student.books.remove(book)
+            db_session.commit()
+        flash("Book returned successfully","success")
+        return redirect(url_for("book_bp.landing_page"))
+
+    flash("No book with this code","danger")
+    return redirect(url_for("book_bp.landing_page"))
+
+
 @book_bp.route("/delete/<int:book_id>/")
 def delete_book(book_id):
     book = Book.query.filter(Book.id == book_id).first()
     db_session.delete(book)
     db_session.commit()
-    flash("Book deleted successfully","danger")
+    flash("Book deleted successfully","success")
     return redirect(url_for("book_bp.landing_page"))
 
 
@@ -68,10 +85,12 @@ def add_book_type():
     return redirect(url_for("book_bp.landing_page"))
 
 
-@book_bp.route("/generate/form/<int:count>/")
-def generate_form(count):
+@book_bp.route("/generate/form/",methods=["POST"])
+def generate_form():
+    count = int(request.form["count"])
+    sl_bt = request.form["sl_bt"]
     book_types = BookType.query.all()
-    return render_template("book/book_add_form.html",count=count,book_types=book_types)
+    return render_template("book/book_add_form.html",count=count,sl_bt=sl_bt,book_types=book_types)
 
 
 @book_bp.route("add/multiple/<int:count>/",methods=["POST"])

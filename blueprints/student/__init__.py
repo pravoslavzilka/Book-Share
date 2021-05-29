@@ -23,9 +23,10 @@ def landing_page_grade(grade):
 @student_bp.route("/new_student/",methods=["POST"])
 def new_student():
     name = request.form["student_name"]
+    code = request.form["student_code"]
     s_grade = request.form["grade"]
     grade = Grade.query.filter(Grade.name == s_grade).first()
-    n_student = Student(name,grade)
+    n_student = Student(name,grade,int(code))
     db_session.add(n_student)
     db_session.commit()
     flash("New user successfully added", "success")

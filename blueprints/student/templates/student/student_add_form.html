@@ -40,28 +40,39 @@
 
     <div class="row py-5 px-4" >
         <div class="col-md-8 mx-auto">
-                <h2>Grade</h2>
                 <div class="card" style="margin:30px;">
 	              <div class="card-body">
-                      <form method="post" action="{{ url_for('student_bp.add_mul_student',count=count) }}" class="form-inline needs-validation">
-                          <img class="img-grade" style="height:37px;margin-bottom:5px;margin-right:5px;" src="{{url_for('static',filename='images/class_icon.jpg')}}">
+                      <form method="post" action="{{ url_for('student_bp.add_mul_student',count=count) }}">
 
-                          <select name="grade" style="margin-left:50px;">
-                              {% for grade in grades %}
-                                <option>{{ grade.name }}</option>
-                              {% endfor %}
-                          </select>
-                          <div>
-                            <h2>Student:</h2>
-                          </div>
+                            <div class="d-flex justify-content-center" style="padding-bottom:45px;">
+                                <select class="form-control" name="grade" style="width:100px;">
+                                  {% for grade in grades %}
+                                    {% if grade.name == sl_grade %}
+                                        <option selected>{{ grade.name }}</option>
+                                    {% else %}
+                                        <option>{{ grade.name }}</option>
+                                    {% endif %}
+                                  {% endfor %}
+                                </select>
+                            </div>
+
+
                           {% for i in range(count) %}
-                            <div>
-                                <input type="text" placeholder="name" name="student{{i}}">
-                                <input type="number" placeholder="code" name="student_code{{i}}">
+                            <div class="form-group row" style="margin-top:10px;">
+                                <label class="col-sm-2 col-form-label">Student {{ i + 1}}</label>
+                                <div class="col-sm-5">
+                                    <input class="form-control" style="margin-right:10px;" type="text" placeholder="name" name="student{{i}}" required>
+                                </div>
+                                <div class="col-sm-5">
+                                    <input class="form-control" type="number" placeholder="code" name="student_code{{i}}" required>
+                                </div>
                             </div>
                           {% endfor %}
-                        </span>
-                        <input type="submit">
+
+                          <div class="form-group row">
+                              <input class="btn btn-success" style="margin-left:30px;margin-top:20px;" value="Add" type="submit">
+                          </div>
+
                       </form>
 	              </div>
             </div>

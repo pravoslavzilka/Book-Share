@@ -69,6 +69,7 @@
                 <strong class="" style="padding-bottom:5px;font-size: 18px;">New student:</strong>
 			    <form class="form-inline needs-validation" action="{{url_for('student_bp.new_student')}}" method="post" style="margin-top:10px;">
 				  <input name="student_name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Name">
+                  <input name="student_code"  type="number" class="form-control mb-2 mr-sm-2"  placeholder="Code">
                     <select class="form-control" name="grade" style="margin-right:10px;margin-bottom:10px;" required>
                       {% for grade in grades %}
                         <option>{{ grade.name }}</option>
@@ -164,7 +165,8 @@
           <thead class="thead-dark">
             <tr class="header">
               <th scope="col">#</th>
-              <th scope="col">First</th>
+              <th scope="col">Name</th>
+              <th scope="col">Code</th>
               <th scope="col">Grade</th>
               <th scope="col">Total Books</th>
               <th scope="col">Visit</th>
@@ -174,7 +176,8 @@
             {% for student in students %}
                 <tr>
                   <th scope="row">{{ student.id }}</th>
-                  <td class="search-term">{{ student.name }}</td>
+                  <td>{{ student.name }}</td>
+                  <td>{{ student.code }}</td>
                   <td>{{ student.grade.name }}</td>
                   <td>{{ student.books|length }}</td>
                   <td><a class="btn btn-primary btn-sm " href="{{url_for('student_bp.view_student',student_id=student.id)}}">Visit</a></td>

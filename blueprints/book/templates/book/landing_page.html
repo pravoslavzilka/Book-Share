@@ -67,12 +67,13 @@
     </div>
 
 
+
     <div style="margin:10px;" class="d-flex justify-content-center">
 			<div class="collapse " id="add-book">
 			  <div class="card card-body ">
                 <strong class="" style="padding-bottom:5px;font-size: 18px;">New book:</strong>
 			    <form class="form-inline needs-validation" action="{{ url_for('book_bp.add_book') }}" method="post" style="margin-top:10px;">
-				  <input name="book_code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Code">
+				  <input name="book_code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Code" required>
                     <select class="form-control" name="book_type" style="margin-right:10px;margin-bottom:10px;" required>
                       {% for book_type in book_types %}
                         <option>{{ book_type.name }}</option>
@@ -89,21 +90,68 @@
 			  <div class="card card-body ">
                 <strong class="" style="padding-bottom:5px;font-size: 18px;">New book type:</strong>
 			    <form class="form-inline needs-validation" action="{{ url_for('book_bp.add_book_type') }}" method="post" style="margin-top:10px;">
-				  <input name="book_type"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Book Type">
+				  <input name="book_type"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Book Type" required>
                   <button type="submit" class="btn btn-primary mb-2">Add</button>
 				</form>
 			  </div>
 			</div>
 
 		</div>
-        <div class="d-flex justify-content-center">
-		  <button id="add-book-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book" aria-expanded="false" aria-controls="add-book">
+        <div class="container">
+              <div style="margin:30px;" class="d-flex justify-content-center">
+			<div class="collapse " id="add-m-book">
+			  <div class="card card-body ">
+                <strong class="" style="padding-bottom:5px;font-size: 18px;">How many ?</strong>
+			    <form class="form-inline needs-validation" action="{{url_for('book_bp.generate_form')}}" method="post" style="margin-top:10px;">
+				  <input name="count" type="number" class="form-control mb-2 mr-sm-2" placeholder="Count" required>
+                    <select class="form-control" name="sl_bt" style="margin-right:10px;margin-bottom:10px;" required>
+                      {% for book_type in book_types %}
+                        <option>{{ book_type.name }}</option>
+                      {% endfor %}
+                    </select>
+                  <button type="submit" class="btn btn-primary mb-2">Generate form</button>
+				</form>
+			  </div>
+			</div>
+        </div>
+
+
+        <div style="margin:10px;" class="d-flex justify-content-center">
+			<div class="collapse " id="return-book">
+			  <div class="card card-body ">
+                <strong class="" style="padding-bottom:5px;font-size: 18px;">Return book:</strong>
+			    <form class="form-inline needs-validation" action="{{ url_for('book_bp.return_book') }}" method="post" style="margin-top:10px;">
+				  <input name="book_code"  type="number" class="form-control mb-2 mr-sm-2" placeholder="Book Code" required>
+                  <button type="submit" class="btn btn-danger mb-2">Return</button>
+				</form>
+			  </div>
+			</div>
+
+		</div>
+
+        <div class="d-flex justify-content-center" style="margin-bottom:10px;">
+            <button style="margin-right:5px;" id="add-book-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book" aria-expanded="false" aria-controls="add-book">
 		    + Add new Book
-		  </button>
-          <button style="margin-left:10px;" id="add-book-type-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book-type" aria-expanded="false" aria-controls="add-book-type">
+		    </button>
+            <button id="add-ml-book-b" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#add-m-book" aria-expanded="false" aria-controls="add-m-book">
+		    + Add multiple books
+		    </button>
+        </div>
+
+
+        <div class="d-flex justify-content-center">
+
+          <button style="margin-right:5px;" id="add-book-type-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book-type" aria-expanded="false" aria-controls="add-book-type">
 		    + Add new Book Type
 		  </button>
+          <button id="return-book-b" class="btn btn-danger" type="button" data-toggle="collapse" data-target="#return-book" aria-expanded="false" aria-controls="return-book">
+		    Return book
+		  </button>
 		</div>
+
+
+
+
 
 
     <div class="container" style="padding-top:60px;">
