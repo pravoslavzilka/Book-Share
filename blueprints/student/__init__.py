@@ -1,9 +1,16 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, send_file
 from database import db_session
 from models import Grade, Student, Book
+import pandas as pd
+from werkzeug.utils import secure_filename
+import os
+import openpyxl
 
 
 student_bp = Blueprint("student_bp",__name__,template_folder="templates")
+
+ALLOWED_EXTENSIONS = {'xlsx','xlsm'}
+UPLOAD_FOLDER = '/path/files'
 
 
 @student_bp.route("/all/")
@@ -169,14 +176,6 @@ def search_student2():
     return render_template("student/search_student.html")
 
 
-@student_bp.route("/generate/form/",methods=["POST"])
-def generate_form():
-    count = int(request.form["count"])
-    sl_grade = request.form["grade"]
-    grades = Grade.query.all()
-    return render_template("student/student_add_form.html",count=count,grades=grades,sl_grade=sl_grade)
-
-
 @student_bp.route("add/multiple/<int:count>/",methods=["POST"])
 def add_mul_student(count):
     grade = Grade.query.filter(Grade.name == request.form["grade"]).first()
@@ -190,6 +189,37 @@ def add_mul_student(count):
         db_session.commit()
 
     flash(str(count) + " students added successfully", "success")
+    return redirect(url_for("student_bp.landing_page"))
+
+
+@student_bp.route("read/from/excel_chart/")
+def read_from_excel():
+    df = pd.read_excel("static/files/students_chart.xlsx",usecols=[0,1,2,3,4])
+    print(df)
+    return redirect(url_for("student_bp.landing_page"))
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@student_bp.route('/upload/source/excel/',methods=["POST"])
+def upload_file():
+
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        wb_obj = openpyxl.load_workbook(file)
+        sheet_obj = wb_obj.active
+        cell_obj = sheet_obj.cell(row=1,column=1)
+        print(cell_obj.value)
+        return redirect(url_for("student_bp.landing_page"))
+    flash("Something went wrong, contact support","danger")
     return redirect(url_for("student_bp.landing_page"))
 
 
