@@ -153,13 +153,13 @@
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
           <div class="card card-signin my-5">
             <div class="card-body">
-              <h5 class="card-title text-center">Student's code:</h5>
-              <form class="form-signin" method="post" action="{{url_for('student_bp.search_student2')}}">
+              <h5 class="card-title text-center">Book code:</h5>
+              <form class="form-signin" method="post" action="{{url_for('book_bp.return_book')}}">
                 <div class="form-label-group">
-                  <input type="number" id="inputEmail" name="student_code" class="form-control" placeholder="Enter your student's code" required autofocus>
+                  <input type="number" id="inputEmail" name="book_code" class="form-control" placeholder="Enter your student's code" required autofocus>
                   <label for="inputEmail">Code</label>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Search</button>
+                <button class="btn btn-lg btn-danger btn-block text-uppercase" type="submit">Return</button>
                 <hr class="my-4">
                 </form>
             </div>

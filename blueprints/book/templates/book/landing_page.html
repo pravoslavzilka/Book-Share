@@ -115,37 +115,20 @@
 			</div>
         </div>
 
-
-        <div style="margin:10px;" class="d-flex justify-content-center">
-			<div class="collapse " id="return-book">
-			  <div class="card card-body ">
-                <strong class="" style="padding-bottom:5px;font-size: 18px;">Return book:</strong>
-			    <form class="form-inline needs-validation" action="{{ url_for('book_bp.return_book') }}" method="post" style="margin-top:10px;">
-				  <input name="book_code"  type="number" class="form-control mb-2 mr-sm-2" placeholder="Book Code" required>
-                  <button type="submit" class="btn btn-danger mb-2">Return</button>
-				</form>
-			  </div>
-			</div>
-
 		</div>
 
         <div class="d-flex justify-content-center" style="margin-bottom:10px;">
             <button style="margin-right:5px;" id="add-book-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book" aria-expanded="false" aria-controls="add-book">
 		    + Add new Book
 		    </button>
-            <button id="add-ml-book-b" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#add-m-book" aria-expanded="false" aria-controls="add-m-book">
-		    + Add multiple books
-		    </button>
+
         </div>
-
-
         <div class="d-flex justify-content-center">
-
-          <button style="margin-right:5px;" id="add-book-type-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book-type" aria-expanded="false" aria-controls="add-book-type">
-		    + Add new Book Type
+          <button id="add-ml-book-b" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#add-m-book" aria-expanded="false" aria-controls="add-m-book">
+		    + Add multiple books
 		  </button>
-          <button id="return-book-b" class="btn btn-danger" type="button" data-toggle="collapse" data-target="#return-book" aria-expanded="false" aria-controls="return-book">
-		    Return book
+          <button style="margin-left:5px;" id="add-book-type-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book-type" aria-expanded="false" aria-controls="add-book-type">
+		    + Add new Book Type
 		  </button>
 		</div>
 

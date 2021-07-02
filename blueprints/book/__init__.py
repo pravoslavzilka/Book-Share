@@ -43,6 +43,11 @@ def add_book():
     return redirect(url_for("book_bp.landing_page"))
 
 
+@book_bp.route("/return/",methods=["GET"])
+def return_book_view():
+    return render_template("book/return_book.html")
+
+
 @book_bp.route("/return/",methods=["POST"])
 def return_book():
     code = int(request.form["book_code"])
@@ -57,7 +62,7 @@ def return_book():
         return redirect(url_for("book_bp.landing_page"))
 
     flash("No book with this code","danger")
-    return redirect(url_for("book_bp.landing_page"))
+    return redirect(url_for("book_bp.return_book_view"))
 
 
 @book_bp.route("/delete/<int:book_id>/")

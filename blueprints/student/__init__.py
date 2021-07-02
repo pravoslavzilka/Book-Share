@@ -9,7 +9,7 @@ import openpyxl
 
 student_bp = Blueprint("student_bp",__name__,template_folder="templates")
 
-ALLOWED_EXTENSIONS = {'xlsx','xlsm'}
+ALLOWED_EXTENSIONS = {'xlsx','xlsm','xltx','xltm'}
 UPLOAD_FOLDER = '/path/files'
 
 
@@ -216,10 +216,20 @@ def upload_file():
         filename = secure_filename(file.filename)
         wb_obj = openpyxl.load_workbook(file)
         sheet_obj = wb_obj.active
-        cell_obj = sheet_obj.cell(row=1,column=1)
-        print(cell_obj.value)
+
+        for i in range(1,sheet_obj.max_row):
+            name = sheet_obj.cell(row=i+1, column=2).value
+            code = sheet_obj.cell(row=i+1, column=3).value
+            grade_name = sheet_obj.cell(row=i+1, column=4).value
+            grade = Grade.query.filter(Grade.name == grade_name).first()
+
+            s = Student(name,grade,code)
+            db_session.add(s)
+            db_session.commit()
+
+        flash("Students from chart successfully added","success")
         return redirect(url_for("student_bp.landing_page"))
+
     flash("Something went wrong, contact support","danger")
     return redirect(url_for("student_bp.landing_page"))
-
 
