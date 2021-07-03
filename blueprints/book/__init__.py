@@ -59,7 +59,7 @@ def return_book():
             student.books.remove(book)
             db_session.commit()
         flash("Book returned successfully","success")
-        return redirect(url_for("book_bp.landing_page"))
+        return redirect(url_for("book_bp.return_book_view"))
 
     flash("No book with this code","danger")
     return redirect(url_for("book_bp.return_book_view"))
