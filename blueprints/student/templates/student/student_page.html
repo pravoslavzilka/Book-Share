@@ -15,125 +15,91 @@
 
 
     <style>
-        #grade-form {
-            display:none;
-        }
-        @media only screen and (max-width: 600px) {
-          .grade-buttons {
-            margin-top:10px;;
-          }
-          .img-grade {
-            display:none;
-          }
-        }
-        #live-search-box{
-           text-align:center;
+        @media only screen and (max-width: 700px) {
+            .book-list {
+                margin-top:260px;
+            }
+            .student-card {
+                margin:10px;
+            }
         }
     </style>
 
 
-    <div class="container" style="margin-top:50px;">
-        <h1 class="row d-flex justify-content-center">Student {{ student.name }}</h1>
-    </div>
 
 
+    <div class="container" style="padding-top:100px;">
+        <div class="row">
+            <div class="card student-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:180px;">
+              <div class="card-body">
+                <label style="margin-bottom:-20px;" class="text-muted">Meno</label>
+                <h3 class="card-title" >{{student.name}}</h3>
+                <div>
+                    <strong>Trieda:</strong>
+                    <label>{{ student.grade.name }}</label>
+                </div>
+                <div style="margin-top:-8px;">
+                    <strong>Kód: </strong>
+                    <label>{{ student.code }}</label>
+                </div>
+              </div>
+              <div style="margin-top:30px;" class="d-flex justify-content-center">
+	            	<div class="collapse " id="new-book">
+	            	  <div class="card card-body ">
+                        <strong class="" style="padding-bottom:5px;font-size: 18px;">Rent Book:</strong>
+	            	    <form class="form-inline needs-validation" action="{{url_for('student_bp.rent_book',student_id=student.id)}}" method="post" style="margin-top:10px;">
+	            		  <input name="code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Code">
+                          <button type="submit" class="btn btn-primary mb-2">Rent</button>
+	            		</form>
+	            	  </div>
+	            	</div>
+	           </div>
+               <div style="margin-top:20px;" class="d-flex justify-content-center">
+                    <button id="add-book" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#new-book" aria-expanded="false" aria-controls="new-book">
+	                   + Rent Book
+	                </button>
+                    <a href="{{ url_for('student_bp.return_all',student_id=student.id) }}" style="margin-left:10px;" class="btn btn-danger" type="button" >
+	                  Return all Books
+	                </a>
+               </div>
+            </div>
+            <div class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
+                <h4 class="text-muted">Požičané učebnice</h4>
+                <div>
+                    {% for book in student.books %}
+                        <div style="margin-top:10px;" class="card">
+                          <div class="card-body">
 
-    <div class="row py-5 px-4" >
-        <div class="col-md-8 mx-auto">
-                <h2>Grade</h2>
-                <div class="card" style="margin:30px;">
-	              <div class="card-body">
-                      <div id="original-grade">
-	            	    <img style="height:37px;margin-bottom:5px;margin-right:5px;" src="{{url_for('static',filename='images/class_icon.jpg')}}">
-                        <a style="color:black;text-decoration:none;" href="{{ url_for('student_bp.landing_page_grade',grade=student.grade.name) }}">
-                            <strong style="margin-left:15px;" id="grade-div">{{ student.grade.name }}</strong>
-                        </a>
-                        <button onclick="hideFunction()" style="margin-right:10px" class="btn btn-primary  float-right">Edit</button>
-                      </div>
-                        <div id="grade-form">
-                            <form method="post" action="{{ url_for('student_bp.change_grade',student_id=student.id) }}" class="form-inline needs-validation">
-                                <img class="img-grade" style="height:37px;margin-bottom:5px;margin-right:5px;" src="{{url_for('static',filename='images/class_icon.jpg')}}">
-                                <select style="margin-left:10px;" ="{{student.grade.name}}" class="form-control" name="grade" required>
-                                  {% for grade in grades %}
-                                    {% if grade == student.grade %}
-                                        <option selected>{{ grade.name }}</option>
-                                    {% else %}
-                                        <option>{{ grade.name }}</option>
-                                    {% endif %}
-                                  {% endfor %}
-                                </select>
-                              <span class="grade-buttons" style="margin-left:25px;">
-                                <button onclick="hideFunction()" type="button" style="margin-left:10px" class="btn btn-secondary  float-right">Cancel</button>
-                                <button type="submit" style="margin-left:10px" class="btn btn-success  float-right">Apply</button>
-                              </span>
-                            </form>
+                            <div class="container">
+                                <div class="row">
+                                    <img class="inline img-grade" height="30" src="{{url_for('static',filename='images/book_icon.png')}}">
+                                    <div style="margin-left:10px;" class="col-8">
+                                        <h5>{{ book.book_type.name }}</h5>
+                                    </div>
 
+                                    <div style="margin-left:50px;" class="col-8">
+                                        <strong>Autor:</strong>
+                                        <label>Jozej Kukuricúdus</label>
+                                    </div>
+                                    <div>
+                                        <a class="btn btn-danger float-right btn-sm" href="{{ url_for('student_bp.return_book',student_id=student.id,book_id=book.id) }}">Return</a>
+                                    </div>
+                                    <div class="col-8" style="margin-left:50px;margin-top:-10px;margin-bottom:-20px;">
+                                        <strong>Kód:</strong>
+                                        <label>{{ book.code }}</label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                          </div>
                         </div>
-	              </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row px-4" style="margin-top:-30px;">
-        <div class="col-md-8 mx-auto">
-           <h2>Books</h2>
-        </div>
-    </div>
-
-    <div class="container" style="margin-top:20px;">
-        <div class="row d-flex justify-content-center">
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" id="live-search-box" type="search" placeholder="Search for book" aria-label="Search">
-            </form>
-        </div>
-    </div>
-
-     <div style="margin-top:30px;" class="d-flex justify-content-center">
-		<div class="collapse " id="new-book">
-		  <div class="card card-body ">
-            <strong class="" style="padding-bottom:5px;font-size: 18px;">Rent Book:</strong>
-		    <form class="form-inline needs-validation" action="{{url_for('student_bp.rent_book',student_id=student.id)}}" method="post" style="margin-top:10px;">
-			  <input name="code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Code">
-              <button type="submit" class="btn btn-primary mb-2">Rent</button>
-			</form>
-		  </div>
-		</div>
-	</div>
-
-    <div style="margin-top:20px;" class="d-flex justify-content-center">
-	  <button id="add-book" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#new-book" aria-expanded="false" aria-controls="new-book">
-	    + Rent Book
-	  </button>
-      <a href="{{ url_for('student_bp.return_all',student_id=student.id) }}" style="margin-left:10px;" class="btn btn-danger" type="button" >
-	    Return all Books
-	  </a>
-	</div>
-
-    <div class="container" style="padding-top:60px;">
-        <div class="col-sm-10 col-lg-12 mx-auto">
-            <table class="table" id="books-table">
-              <thead class="thead-dark">
-                <tr class="header">
-                  <th scope="col">#</th>
-                  <th scope="col">Type</th>
-                  <th scope="col">Code</th>
-                  <th scope="col">Return</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for book in student.books %}
-                    <tr>
-                      <th scope="row">{{ book.id }}</th>
-                      <td class="search-term">{{ book.book_type.name }}</td>
-                      <td>{{ book.code}}</td>
-                      <td><a class="btn btn-success btn-sm" href="{{ url_for('student_bp.return_book',student_id=student.id,book_id=book.id) }}">Return</a></td>
-                    </tr>
-                {% endfor %}
-
-              </tbody>
-            </table>
-        </div>
-    </div>
 
     <div class="modal fade" id="ar_u_s" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
@@ -154,6 +120,8 @@
         </div>
       </div>
     </div>
+
+
 
     <div class="d-flex justify-content-center" style="margin-top:130px;">
         <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#ar_u_s">Delete Student</button>
