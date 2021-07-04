@@ -15,14 +15,20 @@
 
 
     <style>
+
         @media only screen and (max-width: 700px) {
             .book-list {
-                margin-top:260px;
+                margin-top:200px;
+                padding-top:15px;
             }
             .student-card {
                 margin:10px;
             }
+            .utilities-buttons {
+                display:none;
+            }
         }
+
     </style>
 
 
@@ -54,47 +60,60 @@
 	            	  </div>
 	            	</div>
 	           </div>
+               <div class="card card-body d-block d-sm-none" style="margin:-15px;margin-top:5px;">
+                        <strong class="" style="padding-bottom:5px;font-size: 18px;">Rent Book:</strong>
+	            	    <form class="form-inline needs-validation" action="{{url_for('student_bp.rent_book',student_id=student.id)}}" method="post" style="margin-top:10px;">
+	            		  <input name="code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Code">
+                          <button type="submit" class="btn btn-primary mb-2">Rent</button>
+	            		</form>
+	            	  </div>
                <div style="margin-top:20px;" class="d-flex justify-content-center">
-                    <button id="add-book" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#new-book" aria-expanded="false" aria-controls="new-book">
-	                   + Rent Book
+                    <button id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-book" aria-expanded="false" aria-controls="new-book">
+	                   + Add Book
 	                </button>
-                    <a href="{{ url_for('student_bp.return_all',student_id=student.id) }}" style="margin-left:10px;" class="btn btn-danger" type="button" >
+                    <a href="{{ url_for('student_bp.return_all',student_id=student.id) }}" style="margin-left:10px;" class="btn btn-danger utilities-buttons" type="button" >
 	                  Return all Books
 	                </a>
                </div>
             </div>
-            <div class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
-                <h4 class="text-muted">Požičané učebnice</h4>
+            <div id="book-list" style="" class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
+                <div  id="book-list2">
+                    <h4  class="text-muted">Požičané učebnice</h4>
+                </div>
                 <div>
-                    {% for book in student.books %}
-                        <div style="margin-top:10px;" class="card">
-                          <div class="card-body">
+                    {% if student.books %}
+                        {% for book in student.books %}
+                            <div style="margin-top:10px;" class="card">
+                              <div class="card-body">
 
-                            <div class="container">
-                                <div class="row">
-                                    <img class="inline img-grade" height="30" src="{{url_for('static',filename='images/book_icon.png')}}">
-                                    <div style="margin-left:10px;" class="col-8">
-                                        <h5>{{ book.book_type.name }}</h5>
-                                    </div>
+                                <div class="container">
+                                    <div class="row">
+                                        <img class="inline img-grade" height="30" src="{{url_for('static',filename='images/book_icon.png')}}">
+                                        <div style="margin-left:10px;" class="col-8">
+                                            <h5>{{ book.book_type.name }}</h5>
+                                        </div>
 
-                                    <div style="margin-left:50px;" class="col-8">
-                                        <strong>Autor:</strong>
-                                        <label>Jozej Kukuricúdus</label>
-                                    </div>
-                                    <div>
-                                        <a class="btn btn-danger float-right btn-sm" href="{{ url_for('student_bp.return_book',student_id=student.id,book_id=book.id) }}">Return</a>
-                                    </div>
-                                    <div class="col-8" style="margin-left:50px;margin-top:-10px;margin-bottom:-20px;">
-                                        <strong>Kód:</strong>
-                                        <label>{{ book.code }}</label>
+                                        <div style="margin-left:50px;" class="col-8">
+                                            <strong>Autor:</strong>
+                                            <label>Jozej Kukuricúdus</label>
+                                        </div>
+                                        <div>
+                                            <a class="btn btn-danger float-right btn-sm" href="{{ url_for('student_bp.return_book',student_id=student.id,book_id=book.id) }}">Return</a>
+                                        </div>
+                                        <div class="col-8" style="margin-left:50px;margin-top:-10px;margin-bottom:-5px;">
+                                            <strong>Kód:</strong>
+                                            <label>{{ book.code }}</label>
+                                        </div>
                                     </div>
                                 </div>
+
+
+                              </div>
                             </div>
-
-
-                          </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <label style="padding-left:20px;padding-top:10px;">Žiadne požičané učebnice</label>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -162,6 +181,7 @@
 	     }
 	    });
 	    });
+
     </script>
 
 
