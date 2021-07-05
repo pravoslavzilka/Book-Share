@@ -16,10 +16,31 @@ def landing_page():
     book_types = BookType.query.all()
 
     return render_template("book/landing_page.html",books=books,book_types=book_types,
-                           ctbooks=total_books,cfbooks=free_books,crbooks=rent_books)
+                           ctbooks=total_books,cfbooks=free_books,crbooks=rent_books
+                           )
 
 
-@book_bp.route("/<book_state>/")
+@book_bp.route("/type/<bt_name>/")
+def book_type_page(bt_name):
+    book_type = BookType.query.filter(BookType.name == bt_name).first()
+
+    free_books = Book.query.filter(Book.student == None, Book.book_type == book_type).count()
+    rent_books = Book.query.filter(Book.student, Book.book_type == book_type).count()
+    total_books = Book.query.filter(Book.book_type == book_type).count()
+
+    return render_template("book/book_type_page.html",book_type=book_type,
+                           ctbooks=total_books, cfbooks=free_books, crbooks=rent_books
+                           )
+
+
+@book_bp.route("/total_list/")
+def list_of_books():
+    books = Book.query.all()
+    book_types = BookType.query.all()
+    return render_template("book/book_list.html", books=books,book_types=book_types)
+
+
+@book_bp.route("/list/<book_state>/")
 def books_state(book_state):
     book_types = BookType.query.all()
     if book_state == "free":
@@ -27,7 +48,7 @@ def books_state(book_state):
     else:
         books = Book.query.filter(Book.student_id != None).all()
 
-    return render_template("book/landing_page.html",books=books,book_types=book_types)
+    return render_template("book/book_list.html",books=books,book_types=book_types)
 
 
 @book_bp.route("/add_new/",methods=["POST"])

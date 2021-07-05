@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Všetky učebnice
+    Učebnice {{ book_type.name }}
 {% endblock title %}
 
 
@@ -41,11 +41,14 @@
 
     <div class="container" style="padding-top:100px;">
         <div class="row">
-            <div class="card student-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:180px;">
+            <div class="card student-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:215px;">
               <div class="card-body">
-                <h3 class="card-title" >Všetky učebnice</h3>
+                <h3 class="card-title" >{{ book_type.name }}</h3>
                 <div>
                     <div>
+                        <h6 class="text-muted" style="margin-top:-7px;">Jozef kukuricúdus</h6>
+                    </div>
+                    <div style="padding-top:3px;">
                         <strong>Požičané:</strong>
                         <label>{{ crbooks }}</label>
                     </div>
@@ -89,41 +92,39 @@
             <div id="book-list" class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
                 <div  id="book-list2">
                     <input placeholder="Vyhľadať učebnicu" type="text" class="form-control" style="width:200px;" id="myInput">
-
                 </div>
 
-                <div id="myTable">
-                    {% if book_types %}
-                        {% for book_type in book_types %}
-                              <div style="margin-top:10px;" class="card">
-                              <div class="card-body">
+                <table class="table" style="margin-top:20px;" id="students-table">
+                  <thead class="thead-dark">
+                    <tr class="header">
+                      <th scope="col">#</th>
+                      <th scope="col">Kód</th>
+                      <th scope="col">Študent</th>
+                      <th scope="col">Odstrániť</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for book in book_type.books %}
+                        {% if book.student %}
+                            <tr class="table-danger">
+                              <th scope="row">{{ book.id }}</th>
+                              <td>{{ book.code }}</td>
+                              <td>{{ book.student.name }}</td>
+                              <td><a class="btn btn-sm btn-danger" href="#">Odstrániť</a></td>
+                            </tr>
+                        {% else %}
+                            <tr class="table-success">
+                              <th scope="row">{{ book.id }}</th>
+                              <td>{{ book.code }}</td>
+                              <td>{{ book.student.name }}</td>
+                              <td><a class="btn btn-sm btn-danger" href="#">Odstrániť</a></td>
+                            </tr>
+                        {% endif %}
 
-                                <div class="container">
-                                    <div class="row">
-                                        <img class="inline img-grade" height="30" src="{{url_for('static',filename='images/book_icon.png')}}">
-                                        <div style="margin-left:10px;" class="col-8">
-                                            <h5><a href="{{ url_for('book_bp.book_type_page',bt_name=book_type.name) }}" style="text-decoration:none;color:black;">{{ book_type.name }}</a></h5>
-                                        </div>
+                    {% endfor %}
 
-                                        <div style="margin-left:50px;" class="col-8">
-                                            <strong>Autor:</strong>
-                                            <label>Jozej Kukuricúdus</label>
-                                        </div>
-                                        <div class="col-8" style="margin-left:50px;margin-top:-10px;margin-bottom:-5px;">
-                                            <strong>Celkovo:</strong>
-                                            <label>{{ book_type.books | length }}</label>
-                                        </div>
-                                    </div>
-                                </div>
-                              </div>
-                            </div>
-
-                        {% endfor %}
-                    {% else %}
-                        <label style="padding-left:20px;padding-top:10px;">Žiadne kategórie učebníc</label>
-                    {% endif %}
-
-                </div>
+                  </tbody>
+                </table>
             </div>
         </div>
     </div>

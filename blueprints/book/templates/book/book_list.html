@@ -1,0 +1,140 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Zoznam všetkých učebníc
+{% endblock title %}
+
+
+{% block content %}
+    <script>
+		$(document).ready(function(){
+  		 	$(".active").removeClass("active");
+  		 	$("#book").addClass("active");
+		});
+	</script>
+
+    <style>
+        .grade-link {
+            color:black;
+        }
+        .grade-link:hover {
+            color:black;
+            text-decoration: none;
+        }
+        #live-search-box{
+           text-align:center;
+        }
+    </style>
+
+    <div class="container" style="margin-top:70px;">
+        <div class="row d-flex justify-content-center">
+            <h1>Books</h1>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top:40px;">
+        <div class="row d-flex justify-content-center">
+            <form class="form-inline my-2 my-lg-0">
+              <input class="form-control mr-sm-2" id="live-search-box" type="search" placeholder="Search for book" aria-label="Search">
+            </form>
+        </div>
+    </div>
+
+    <div class="container" style="padding-top:20px;">
+        <div class="row d-flex justify-content-center">
+            <a href="{{ url_for('book_bp.books_state',book_state='free') }}" class="grade-link">
+                <div class="card center" style="margin:10px;">
+                  <div class="card-body">
+                    Free
+                  </div>
+                </div>
+            </a>
+            <a href="{{ url_for('book_bp.books_state',book_state='rent') }}" class="grade-link">
+                <div class="card center" style="margin:10px;">
+                  <div class="card-body">
+                    Rent
+                  </div>
+                </div>
+            </a>
+            <a href="{{ url_for('book_bp.list_of_books') }}" class="grade-link">
+                <div class="card center" style="margin:10px;">
+                  <div class="card-body">
+                    All
+                  </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="container" style="padding-top:60px;">
+        <table class="table" id="books-table">
+          <thead class="thead-dark">
+            <tr class="header">
+              <th scope="col">#</th>
+              <th scope="col">Type</th>
+              <th scope="col">Code</th>
+              <th scope="col">Student</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for book in books %}
+                {% if book.student_id == None %}
+                    <tr class="table-success">
+                      <th scope="row">{{ book.id }}</th>
+                      <td class="search-term">{{ book.book_type.name }}</td>
+                      <td>{{  book.code }}</td>
+                      <td>{{ book.student.name }}</td>
+                      <td><a class="btn btn-danger btn-sm" href="{{ url_for('book_bp.delete_book',book_id=book.id) }}">Delete</a></td>
+                    </tr>
+                {% else %}
+                    <tr class="table-danger">
+                      <th scope="row">{{ book.id }}</th>
+                      <td class="search-term">{{ book.book_type.name }}</td>
+                      <td>{{  book.code }}</td>
+                      <td>{{ book.student.name }}</td>
+                      <td><a class="btn btn-danger btn-sm" href="{{ url_for('book_bp.delete_book',book_id=book.id) }}">Delete</a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+
+          </tbody>
+        </table>
+
+    </div>
+
+    <script>
+
+        $(document).ready(function(){
+          $("#live-search-box").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#books-table tr:not(.header)").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+        });
+
+     $(document).ready(function(){
+	 $('#add-book-b').on('click', function () {
+	  var text=$('#add-book-b').text();
+	  if(text === "- Add Book"){
+	    $(this).html('+ Add Book');
+	  } else{
+	    $(this).text('- Add Book');
+	 }
+	});
+	});
+
+	$(document).ready(function(){
+	 $('#add-book-type-b').on('click', function () {
+	  var text=$('#add-book-type-b').text();
+	  if(text === "- Add new Book Type"){
+	    $(this).html('+ Add new Book Type');
+	  } else{
+	    $(this).text('- Add new Book Type');
+	 }
+	});
+	});
+    </script>
+
+{% endblock content %}
