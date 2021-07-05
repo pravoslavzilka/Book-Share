@@ -9,9 +9,14 @@ book_bp = Blueprint("book_bp",__name__,template_folder="templates")
 @book_bp.route("/all/")
 def landing_page():
     books = Book.query.all()
+    free_books = Book.query.filter(Book.student == None).count()
+    rent_books = Book.query.filter(Book.student).count()
+    total_books = Book.query.count()
+
     book_types = BookType.query.all()
 
-    return render_template("book/landing_page.html",books=books,book_types=book_types)
+    return render_template("book/landing_page.html",books=books,book_types=book_types,
+                           ctbooks=total_books,cfbooks=free_books,crbooks=rent_books)
 
 
 @book_bp.route("/<book_state>/")

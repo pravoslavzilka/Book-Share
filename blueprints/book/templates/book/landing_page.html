@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    All books
+    Všetky učebnice
 {% endblock title %}
 
 
@@ -14,165 +14,122 @@
 	</script>
 
     <style>
-        .grade-link {
-            color:black;
+
+        @media only screen and (max-width: 700px) {
+            .book-list {
+                margin-top:260px;
+                padding-top:15px;
+            }
+            .student-card {
+                margin:10px;
+            }
+            .utilities-buttons {
+                display:none;
+            }
+
+            #myInput {
+                margin: auto;
+                width: 50%;
+                padding: 10px;
+            }
         }
-        .grade-link:hover {
-            color:black;
-            text-decoration: none;
-        }
-        #live-search-box{
-           text-align:center;
-        }
+
     </style>
 
-    <div class="container" style="margin-top:70px;">
-        <div class="row d-flex justify-content-center">
-            <h1>Books</h1>
-        </div>
-    </div>
 
-    <div class="container" style="margin-top:40px;">
-        <div class="row d-flex justify-content-center">
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" id="live-search-box" type="search" placeholder="Search for book" aria-label="Search">
-            </form>
-        </div>
-    </div>
 
-    <div class="container" style="padding-top:20px;">
-        <div class="row d-flex justify-content-center">
-            <a href="{{ url_for('book_bp.books_state',book_state='free') }}" class="grade-link">
-                <div class="card center" style="margin:10px;">
-                  <div class="card-body">
-                    Free
-                  </div>
+
+    <div class="container" style="padding-top:100px;">
+        <div class="row">
+            <div class="card student-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:180px;">
+              <div class="card-body">
+                <h3 class="card-title" >Sklad učebníc</h3>
+                <div style="padding-left:10px;">
+                    <div>
+                        <strong>Požičané:</strong>
+                        <label>{{ crbooks }}</label>
+                    </div>
+                    <div style="margin-top:-8px;">
+                        <strong>Na sklade: </strong>
+                        <label>{{ cfbooks }}</label>
+                    </div>
+                    <div style="margin-top:-8px;">
+                        <strong>Celkovo: </strong>
+                        <label>{{ ctbooks }}</label>
+                    </div>
                 </div>
-            </a>
-            <a href="{{ url_for('book_bp.books_state',book_state='rent') }}" class="grade-link">
-                <div class="card center" style="margin:10px;">
-                  <div class="card-body">
-                    Rent
-                  </div>
+              </div>
+              <div style="margin-top:30px;" class="d-flex justify-content-center">
+	            	<div class="collapse col-12" id="new-book">
+	            	  <div class="card card-body">
+                        <strong class="" style="padding-bottom:5px;font-size: 18px;">Nová učebnica</strong>
+	            	    <form class=" needs-validation" action="#" method="post" style="margin-top:10px;">
+	            		  <input name="name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Názov">
+                          <input name="author"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Autor">
+                          <button type="submit" class="btn btn-success float-right">Pridať</button>
+                        </form>
+	            	  </div>
+	            	</div>
+	           </div>
+               <div class="card card-body d-block d-sm-none" style="margin:-15px;margin-top:5px;">
+                        <strong class="" style="padding-bottom:5px;font-size: 18px;">Nová učebnica</strong>
+	            	    <form class="needs-validation" action="#" method="post" style="margin-top:10px;">
+	            		  <input name="name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Názov">
+                          <input name="author"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Autor">
+                          <button type="submit" class="btn btn-success float-right">Pridať</button>
+	            		</form>
+	            	  </div>
+               <div style="margin-top:20px;" class="d-flex justify-content-center">
+                    <button id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-book" aria-expanded="false" aria-controls="new-book">
+	                   + Pridať učebnicu
+	                </button>
+
+               </div>
+            </div>
+            <div id="book-list" class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
+                <div  id="book-list2">
+                    <input placeholder="Vyhľadať učebnicu" type="text" class="form-control" style="width:200px;" id="myInput">
+                    
                 </div>
-            </a>
-            <a href="{{ url_for('book_bp.landing_page') }}" class="grade-link">
-                <div class="card center" style="margin:10px;">
-                  <div class="card-body">
-                    All
-                  </div>
+
+                <div id="myTable">
+                    {% if book_types %}
+                        {% for book_type in book_types %}
+                              <div style="margin-top:10px;" class="card">
+                              <div class="card-body">
+
+                                <div class="container">
+                                    <div class="row">
+                                        <img class="inline img-grade" height="30" src="{{url_for('static',filename='images/book_icon.png')}}">
+                                        <div style="margin-left:10px;" class="col-8">
+                                            <h5><a href="#" style="text-decoration:none;color:black;">{{ book_type.name }}</a></h5>
+                                        </div>
+
+                                        <div style="margin-left:50px;" class="col-8">
+                                            <strong>Autor:</strong>
+                                            <label>Jozej Kukuricúdus</label>
+                                        </div>
+                                        <div class="col-8" style="margin-left:50px;margin-top:-10px;margin-bottom:-5px;">
+                                            <strong>Celkovo:</strong>
+                                            <label>{{ book_type.books | length }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+
+                        {% endfor %}
+                    {% else %}
+                        <label style="padding-left:20px;padding-top:10px;">Žiadne kategórie učebníc</label>
+                    {% endif %}
+
                 </div>
-            </a>
+            </div>
         </div>
     </div>
 
 
 
-    <div style="margin:10px;" class="d-flex justify-content-center">
-			<div class="collapse " id="add-book">
-			  <div class="card card-body ">
-                <strong class="" style="padding-bottom:5px;font-size: 18px;">New book:</strong>
-			    <form class="form-inline needs-validation" action="{{ url_for('book_bp.add_book') }}" method="post" style="margin-top:10px;">
-				  <input name="book_code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Code" required>
-                    <select class="form-control" name="book_type" style="margin-right:10px;margin-bottom:10px;" required>
-                      {% for book_type in book_types %}
-                        <option>{{ book_type.name }}</option>
-                      {% endfor %}
-                    </select>
-                  <button type="submit" class="btn btn-primary mb-2">Add</button>
-				</form>
-			  </div>
-			</div>
-
-		</div>
-        <div style="margin:10px;" class="d-flex justify-content-center">
-			<div class="collapse " id="add-book-type">
-			  <div class="card card-body ">
-                <strong class="" style="padding-bottom:5px;font-size: 18px;">New book type:</strong>
-			    <form class="form-inline needs-validation" action="{{ url_for('book_bp.add_book_type') }}" method="post" style="margin-top:10px;">
-				  <input name="book_type"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Book Type" required>
-                  <button type="submit" class="btn btn-primary mb-2">Add</button>
-				</form>
-			  </div>
-			</div>
-
-		</div>
-        <div class="container">
-              <div style="margin:30px;" class="d-flex justify-content-center">
-			<div class="collapse " id="add-m-book">
-			  <div class="card card-body ">
-                <strong class="" style="padding-bottom:5px;font-size: 18px;">How many ?</strong>
-			    <form class="form-inline needs-validation" action="{{url_for('book_bp.generate_form')}}" method="post" style="margin-top:10px;">
-				  <input name="count" type="number" class="form-control mb-2 mr-sm-2" placeholder="Count" required>
-                    <select class="form-control" name="sl_bt" style="margin-right:10px;margin-bottom:10px;" required>
-                      {% for book_type in book_types %}
-                        <option>{{ book_type.name }}</option>
-                      {% endfor %}
-                    </select>
-                  <button type="submit" class="btn btn-primary mb-2">Generate form</button>
-				</form>
-			  </div>
-			</div>
-        </div>
-
-		</div>
-
-        <div class="d-flex justify-content-center" style="margin-bottom:10px;">
-            <button style="margin-right:5px;" id="add-book-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book" aria-expanded="false" aria-controls="add-book">
-		    + Add new Book
-		    </button>
-
-        </div>
-        <div class="d-flex justify-content-center">
-          <button id="add-ml-book-b" class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#add-m-book" aria-expanded="false" aria-controls="add-m-book">
-		    + Add multiple books
-		  </button>
-          <button style="margin-left:5px;" id="add-book-type-b" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#add-book-type" aria-expanded="false" aria-controls="add-book-type">
-		    + Add new Book Type
-		  </button>
-		</div>
-
-
-
-
-
-
-    <div class="container" style="padding-top:60px;">
-        <table class="table" id="books-table">
-          <thead class="thead-dark">
-            <tr class="header">
-              <th scope="col">#</th>
-              <th scope="col">Type</th>
-              <th scope="col">Code</th>
-              <th scope="col">Student</th>
-              <th scope="col">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for book in books %}
-                {% if book.student_id == None %}
-                    <tr class="table-success">
-                      <th scope="row">{{ book.id }}</th>
-                      <td class="search-term">{{ book.book_type.name }}</td>
-                      <td>{{  book.code }}</td>
-                      <td>{{ book.student.name }}</td>
-                      <td><a class="btn btn-danger btn-sm" href="{{ url_for('book_bp.delete_book',book_id=book.id) }}">Delete</a></td>
-                    </tr>
-                {% else %}
-                    <tr class="table-danger">
-                      <th scope="row">{{ book.id }}</th>
-                      <td class="search-term">{{ book.book_type.name }}</td>
-                      <td>{{  book.code }}</td>
-                      <td>{{ book.student.name }}</td>
-                      <td><a class="btn btn-danger btn-sm" href="{{ url_for('book_bp.delete_book',book_id=book.id) }}">Delete</a></td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-
-          </tbody>
-        </table>
-
-    </div>
 
     <script>
 
@@ -185,27 +142,38 @@
           });
         });
 
-     $(document).ready(function(){
-	 $('#add-book-b').on('click', function () {
-	  var text=$('#add-book-b').text();
-	  if(text === "- Add Book"){
-	    $(this).html('+ Add Book');
-	  } else{
-	    $(this).text('- Add Book');
-	 }
-	});
-	});
+        function hideFunction() {
+          var x = document.getElementById("original-grade");
+          var y = document.getElementById("grade-form");
+          if (x.style.display === "none") {
+            x.style.display = "block";
+            y.style.display = "none";
+          } else {
+            x.style.display = "none";
+            y.style.display = "block";
+          }
+        }
 
-	$(document).ready(function(){
-	 $('#add-book-type-b').on('click', function () {
-	  var text=$('#add-book-type-b').text();
-	  if(text === "- Add new Book Type"){
-	    $(this).html('+ Add new Book Type');
-	  } else{
-	    $(this).text('- Add new Book Type');
-	 }
-	});
-	});
+        $(document).ready(function(){
+	     $('#add-book').on('click', function () {
+	      var text=$('#add-book').text();
+	      if(text === "- Pridať učebnicu"){
+	        $(this).html('+ Pridať učebnicu');
+	      } else{
+	        $(this).text('- Pridať učebnicu');
+	     }
+	    });
+	    });
+
+	   $(document).ready(function(){
+          $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable div").filter(function() {
+              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+          });
+        });
+
     </script>
 
 {% endblock content %}
