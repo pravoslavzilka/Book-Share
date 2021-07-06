@@ -69,6 +69,24 @@ def add_book():
     return redirect(url_for("book_bp.landing_page"))
 
 
+@book_bp.route("/add_new/in/<bt_name>/",methods=["POST"])
+def add_book_with_type(bt_name):
+    book_code = request.form["book_code"]
+    book = Book.query.filter(Book.code == book_code).first()
+    if book:
+        flash("Učebnica s týmto kódom už existuje", "danger")
+        return redirect(url_for("book_bp.book_type_page",bt_name=bt_name))
+
+    book_type = BookType.query.filter(BookType.name == bt_name).first()
+    new_book = Book(int(book_code), book_type)
+
+    db_session.add(new_book)
+    db_session.commit()
+
+    flash(f"Učebnica s kódom {book_code} úspešne pridaná","success")
+    return redirect(url_for("book_bp.book_type_page", bt_name=bt_name))
+
+
 @book_bp.route("/return/",methods=["GET"])
 def return_book_view():
     return render_template("book/return_book.html")
@@ -77,6 +95,27 @@ def return_book_view():
 @book_bp.route("/return/",methods=["POST"])
 def return_book():
     code = int(request.form["book_code"])
+    try:
+        book = Book.query.filter(Book.code == code).first()
+    except OverflowError:
+        flash("Neplatný kód", "danger")
+        return redirect(url_for("book_bp.return_book_view"))
+
+    if book:
+        if book.student:
+            student = Student.query.filter(Student.id == book.student.id).first()
+            student.books.remove(book)
+            db_session.commit()
+        flash(f"Kniha s kódom {book.code} bola úspešne vrátená","success")
+        return redirect(url_for("book_bp.return_book_view"))
+
+    flash("Učebnica s takýmto kódom neexistuje","danger")
+    return redirect(url_for("book_bp.return_book_view"))
+
+
+@book_bp.route("/return/from/list/",methods=["POST"])
+def return_book_from_list():
+    code = int(request.form["book_code"])
     book = Book.query.filter(Book.code == code).first()
 
     if book:
@@ -84,20 +123,50 @@ def return_book():
             student = Student.query.filter(Student.id == book.student.id).first()
             student.books.remove(book)
             db_session.commit()
-        flash("Book returned successfully","success")
-        return redirect(url_for("book_bp.return_book_view"))
+        flash(f"Učebnica s kódom {book.code} bola úspešne vrátená", "success")
+        return redirect(url_for("book_bp.list_of_books"))
 
-    flash("No book with this code","danger")
-    return redirect(url_for("book_bp.return_book_view"))
+    flash("Žiadn učebnica s týmto kódom", "danger")
+    return redirect(url_for("book_bp.list_of_books"))
 
 
-@book_bp.route("/delete/<int:book_id>/")
-def delete_book(book_id):
-    book = Book.query.filter(Book.id == book_id).first()
+@book_bp.route("/return/with/type/",methods=["POST"])
+def return_book_with_type():
+    code = int(request.form["book_code"])
+    book = Book.query.filter(Book.code == code).first()
+
+    if book:
+        if book.student:
+            student = Student.query.filter(Student.id == book.student.id).first()
+            student.books.remove(book)
+            db_session.commit()
+        flash(f"Učebnica s kódom {book.code} bola úspešne vrátená", "success")
+        return redirect(url_for("book_bp.book_type_page",bt_name=book.book_type.name))
+
+    flash("Žiadn učebnica s týmto kódom", "danger")
+    return redirect(url_for("book_bp.book_type_page",bt_name=book.book_type.name))
+
+
+@book_bp.route("/delete/",methods=['POST'])
+def delete_book():
+    book_code = int(request.form["book_code"])
+    book = Book.query.filter(Book.code == book_code).first()
+    book_type = BookType.query.filter(BookType.id == book.book_type_id).first()
     db_session.delete(book)
     db_session.commit()
-    flash("Book deleted successfully","success")
-    return redirect(url_for("book_bp.landing_page"))
+    flash(f"Kniha s kódom {book.code} bola úspešne odstránená","success")
+    return redirect(url_for("book_bp.book_type_page",bt_name=book_type.name))
+
+
+@book_bp.route("/delete/from/list/",methods=['POST'])
+def delete_book_from_list():
+    book_code = int(request.form["book_code"])
+    book = Book.query.filter(Book.code == book_code).first()
+
+    db_session.delete(book)
+    db_session.commit()
+    flash(f"Kniha s kódom {book.code} bola úspešne odstránená","success")
+    return redirect(url_for("book_bp.list_of_books"))
 
 
 @book_bp.route("/add_type/",methods=["POST"])

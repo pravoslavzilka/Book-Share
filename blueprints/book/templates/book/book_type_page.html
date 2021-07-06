@@ -17,7 +17,7 @@
 
         @media only screen and (max-width: 700px) {
             .book-list {
-                margin-top:260px;
+                margin-top:200px;
                 padding-top:15px;
             }
             .student-card {
@@ -62,24 +62,22 @@
                     </div>
                 </div>
               </div>
-              <div style="margin-top:30px;" class="d-flex justify-content-center">
-	            	<div class="collapse col-12" id="new-book">
-	            	  <div class="card card-body">
+              <div style="margin-top:35px;" class="d-flex justify-content-center">
+	            	<div class="collapse " id="new-book">
+	            	  <div class="card card-body ">
                         <strong class="" style="padding-bottom:5px;font-size: 18px;">Nová učebnica</strong>
-	            	    <form class=" needs-validation" action="#" method="post" style="margin-top:10px;">
-	            		  <input name="name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Názov">
-                          <input name="author"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Autor">
-                          <button type="submit" class="btn btn-success float-right">Pridať</button>
-                        </form>
+	            	    <form class="form-inline needs-validation" action="{{ url_for('book_bp.add_book_with_type',bt_name=book_type.name) }}" method="post" style="margin-top:10px;">
+	            		  <input name="book_code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Kód">
+                          <button type="submit" class="btn btn-success mb-2">Pridať</button>
+	            		</form>
 	            	  </div>
 	            	</div>
 	           </div>
                <div class="card card-body d-block d-sm-none" style="margin:-15px;margin-top:5px;">
                         <strong class="" style="padding-bottom:5px;font-size: 18px;">Nová učebnica</strong>
-	            	    <form class="needs-validation" action="#" method="post" style="margin-top:10px;">
-	            		  <input name="name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Názov">
-                          <input name="author"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Autor">
-                          <button type="submit" class="btn btn-success float-right">Pridať</button>
+	            	    <form class="form-inline needs-validation" method="post" action="{{ url_for('book_bp.add_book_with_type',bt_name=book_type.name) }}"  style="margin-top:10px;">
+	            		  <input name="book_code" type="number" class="form-control mb-2 mr-sm-2" placeholder="Kód">
+                          <button type="submit" class="btn btn-success mb-2">Pridať</button>
 	            		</form>
 	            	  </div>
                <div style="margin-top:20px;" class="d-flex justify-content-center">
@@ -91,10 +89,10 @@
             </div>
             <div id="book-list" class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
                 <div  id="book-list2">
-                    <input placeholder="Vyhľadať učebnicu" type="text" class="form-control" style="width:200px;" id="myInput">
+                    <input placeholder="Vyhľadať učebnicu" type="text" class="form-control" style="width:200px;" id="search-bar">
                 </div>
 
-                <table class="table" style="margin-top:20px;" id="students-table">
+                <table class="table" style="margin-top:20px;">
                   <thead class="thead-dark">
                     <tr class="header">
                       <th scope="col">#</th>
@@ -104,23 +102,33 @@
                       <th scope="col">Odstrániť</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="listStudents">
                     {% for book in book_type.books %}
                         {% if book.student %}
                             <tr class="table-danger">
                               <th scope="row">{{ book.id }}</th>
                               <td>{{ book.code }}</td>
-                              <td>{{ book.student.name }}</td>
-                              <td><a class="btn btn-sm btn-danger" href="#">Vrátiť</a></td>
-                              <td><a class="btn btn-sm btn-danger" href="#">Odstrániť</a></td>
+                              <td>
+                                  <a href="{{ url_for('student_bp.view_student',student_id=book.student.id) }}" style="text-decoration:none;color:black;">
+                                      {{ book.student.name }}
+                                  </a>
+                                </td>
+                              <td>
+                                  <button class="btn btn-sm btn-info" data-toggle="modal" data-target="#modalForReturn" data-bookcode="{{ book.code }}">Vrátiť</button>
+                              </td>
+                              <td>
+                                  <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalForDelete" data-bookcode="{{ book.code }}">Odstrániť</button>
+                              </td>
                             </tr>
                         {% else %}
                             <tr class="table-success">
                               <th scope="row">{{ book.id }}</th>
                               <td>{{ book.code }}</td>
-                              <td>{{ book.student.name }}</td>
-                              <td><a class="btn btn-sm btn-info" href="#">Vrátiť</a></td>
-                              <td><a class="btn btn-sm btn-danger" href="#">Odstrániť</a></td>
+                              <td>-</td>
+                              <td>-</td>
+                              <td>
+                                  <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modalForDelete" data-bookcode="{{ book.code }}">Odstrániť</button>
+                              </td>
                             </tr>
                         {% endif %}
 
@@ -132,31 +140,94 @@
         </div>
     </div>
 
+    <!-- MODAL FOR DELETE A BOOK -->
+    <div class="modal fade" id="modalForDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Odstránenie učebnice</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="main-text" style="padding-bottom:20px;">
+
+            </div>
+            <form method="post" action="{{ url_for('book_bp.delete_book') }}">
+              <div class="form-group d-none">
+                <input type="number" name="book_code" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-danger float-right">Odstrániť</button>
+              <button type="button" class="btn btn-secondary float-right" style="margin-right:5px;" data-dismiss="modal">Zrušiť</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- MODAL FOR RETURN A BOOK -->
+    <div class="modal fade" id="modalForReturn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Vrátenie učebnice</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="main-text" style="padding-bottom:20px;">
+
+            </div>
+            <form method="post" action="{{ url_for('book_bp.return_book_with_type') }}">
+              <div class="form-group d-none">
+                <input type="number" name="book_code" class="form-control">
+              </div>
+              <button type="submit" class="btn btn-info float-right">Vrátiť</button>
+              <button type="button" class="btn btn-secondary float-right" style="margin-right:5px;" data-dismiss="modal">Zrušiť</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
 
 
     <script>
+        // script for sending data to "delete a book" modal
+        $('#modalForDelete').on('show.bs.modal', function (event) {
+          var button = $(event.relatedTarget) // Button that triggered the modal
+          var recipient = button.data('bookcode') // Extract info from data-* attributes
 
+          var modal = $(this)
+          modal.find('.modal-body .main-text').text("Naozaj chcete odstrániť učebnicu s kódom " + recipient)
+          modal.find('.modal-body input').val(recipient)
+        })
+
+
+        // script for sending data to "return a book" modal
+        $('#modalForReturn').on('show.bs.modal', function (event) {
+          var button = $(event.relatedTarget) // Button that triggered the modal
+          var recipient = button.data('bookcode') // Extract info from data-* attributes
+
+          var modal = $(this)
+          modal.find('.modal-body .main-text').text("Naozaj chcete vrátiť učebnicu s kódom " + recipient)
+          modal.find('.modal-body input').val(recipient)
+        })
+
+
+        // script for jQuery search in table
         $(document).ready(function(){
-          $("#live-search-box").on("keyup", function() {
+          $("#search-bar").on("keyup", function() {
             var value = $(this).val().toLowerCase();
-            $("#books-table tr:not(.header)").filter(function() {
+            $("#listStudents tr").filter(function() {
               $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
           });
         });
-
-        function hideFunction() {
-          var x = document.getElementById("original-grade");
-          var y = document.getElementById("grade-form");
-          if (x.style.display === "none") {
-            x.style.display = "block";
-            y.style.display = "none";
-          } else {
-            x.style.display = "none";
-            y.style.display = "block";
-          }
-        }
 
         $(document).ready(function(){
 	     $('#add-book').on('click', function () {
@@ -168,15 +239,6 @@
 	     }
 	    });
 	    });
-
-	   $(document).ready(function(){
-          $("#myInput").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#myTable div").filter(function() {
-              $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-          });
-        });
 
     </script>
 
