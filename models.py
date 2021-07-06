@@ -83,11 +83,12 @@ class BookType(Base):
     __tablename__ = "book_type"
     id = Column(Integer,primary_key=True)
     name = Column(String(50))
-
+    author = Column(String(50))
     books = relationship("Book", back_populates="book_type")
     
-    def __init__(self, name=None):
+    def __init__(self, name=None, author=None):
         self.name = name
+        self.author = author
 
 
 

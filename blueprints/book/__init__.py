@@ -179,20 +179,27 @@ def delete_book_from_list():
 
 @book_bp.route("/add_type/",methods=["POST"])
 def add_book_type():
-    req_bt = request.form["book_type"]
-    book_type = BookType.query.filter(BookType.name == req_bt).first()
-    if book_type:
-        flash("Typ tejto učibnice bol už pridaný","danger")
+    req_bt = request.form["book_name"]
+    req_ba = request.form["book_author"]
+
+    try:
+        book_type = BookType.query.filter(BookType.name == req_bt).first()
+    except OverflowError:
+        flash("Neplatný kód","danger")
         return redirect(url_for("book_bp.landing_page"))
 
-    new_bt = BookType(req_bt)
+    if book_type:
+        flash("Typ tejto učibnice už existuje","danger")
+        return redirect(url_for("book_bp.landing_page"))
+
+    new_bt = BookType(req_bt,req_ba)
     db_session.add(new_bt)
     try:
         db_session.commit()
     except OverflowError:
-        flash("Neplatné meno", "danger")
+        flash("Neplatné údaje", "danger")
         return redirect(url_for("book_bp.landing_page"))
 
-    flash(f"Nový typ učebníc {req_bt} úspešne pridaný", "success")
+    flash(f"Nový typ učebníc {req_bt} bol úspešne pridaný", "success")
     return redirect(url_for("book_bp.landing_page"))
 

@@ -64,12 +64,15 @@
                     <button onclick="show('operation1')" style="margin-top:10px;" class="btn btn-sm btn-secondary ">Upraviť</button>
                 </div>
                 <div id="operation1" style="display:none">
-                    <form method="post" action="{{ url_for('student_bp.change_student',student_id = student.id) }}">
+                    <form method="post" class="needs-validation" action="{{ url_for('student_bp.change_student',student_id = student.id) }}">
                       <h4 style="padding-bottom:10px;">Upraviť údaje:</h4>
                       <div class="form-group row">
                         <label for="studentName" style="margin-right:-30px;" class="col-sm-3 col-form-label">Meno</label>
                         <div class="col-sm-9">
-                            <input id="studentName" name="student_name" type="text" value="{{ student.name }}" class="form-control" placeholder="Meno">
+                            <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="30" id="studentName" name="student_name" type="text" value="{{ student.name }}" class="form-control" placeholder="Meno" required>
+                        </div>
+                        <div style="margin-left:10px;" class="invalid-feedback">
+                          Zadajte platné meno študenta
                         </div>
                       </div>
                       <div class="form-group row">
@@ -89,7 +92,10 @@
                       <div class="form-group row">
                         <label for="studentCode" style="margin-right:-30px;" class="col-sm-3 col-form-label">Kód</label>
                         <div class="col-sm-9">
-                            <input id="studentCode" name="student_code" type="number" value="{{ student.code }}" class="form-control" placeholder="Kód">
+                            <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="15" id="studentCode" name="student_code" type="number" value="{{ student.code }}" class="form-control" placeholder="Kód" required>
+                        </div>
+                        <div style="margin-left:10px;" class="invalid-feedback">
+                          Zadajte platný kód študenta
                         </div>
                       </div>
                       <div style="padding-top:15px;">
@@ -102,21 +108,27 @@
 
 
               </div>
-              <div style="margin-top:20px;" class="d-flex justify-content-center">
+              <div style="margin-top:10px;" class="d-flex justify-content-center">
 	            	<div class="collapse " id="new-book">
 	            	  <div class="card card-body ">
                         <strong class="" style="padding-bottom:5px;font-size: 18px;">Pridať učebnicu</strong>
-	            	    <form class="form-inline needs-validation" action="{{url_for('student_bp.rent_book',student_id=student.id)}}" method="post" style="margin-top:10px;">
-	            		  <input name="code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Kód">
+	            	    <form class="form-inline needs-validation" action="{{url_for('student_bp.rent_book',student_id=student.id)}}" method="post" style="margin-top:10px;" novalidate>
+	            		  <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="15" name="code"  type="number" class="form-control mb-2 mr-sm-2" placeholder="Kód" required>
+                          <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
+                            Zadaj platný kód učebnice
+                          </div>
                           <button type="submit" class="btn btn-success mb-2">Pridať</button>
 	            		</form>
 	            	  </div>
 	            	</div>
 	           </div>
-               <div class="card card-body d-block d-sm-none" style="margin:-15px;margin-top:5px;">
+               <div class="card card-body d-block d-sm-none" style="margin:-15px;margin-top:2px;">
                         <strong class="" style="padding-bottom:5px;font-size: 18px;">Pridať učebnicu</strong>
-	            	    <form class="form-inline needs-validation" action="{{url_for('student_bp.rent_book',student_id=student.id)}}" method="post" style="margin-top:10px;">
-	            		  <input name="code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Kód">
+	            	    <form class="form-inline needs-validation" action="{{url_for('student_bp.rent_book',student_id=student.id)}}" method="post" style="margin-top:10px;" novalidate>
+	            		  <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="15" name="code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Kód" required>
+                          <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
+                            Zadaj platný kód učebnice
+                          </div>
                           <button type="submit" class="btn btn-success mb-2">Pridať</button>
 	            		</form>
 	            	  </div>
@@ -124,7 +136,7 @@
                     <button id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-book" aria-expanded="false" aria-controls="new-book">
 	                   + Pridať učebnicu
 	                </button>
-                    <button type="button" style="margin-left:5px;" class="btn btn-danger utilities-buttons" data-toggle="modal" data-target="#exampleModal56">
+                    <button type="button" style="margin-left:5px;" class="btn btn-info utilities-buttons" data-toggle="modal" data-target="#exampleModal56">
                       Vrátiť všetky
                     </button>
                </div>
@@ -148,10 +160,10 @@
 
                                         <div style="margin-left:50px;" class="col-8">
                                             <strong>Autor:</strong>
-                                            <label>Jozej Kukuricúdus</label>
+                                            <label>{{ book.book_type.author }}</label>
                                         </div>
                                         <div>
-                                            <a class="btn btn-danger float-right btn-sm" href="{{ url_for('student_bp.return_book',student_id=student.id,book_id=book.id) }}">Vrátiť</a>
+                                            <a class="btn btn-info float-right btn-sm" href="{{ url_for('student_bp.return_book',student_id=student.id,book_id=book.id) }}">Vrátiť</a>
                                         </div>
                                         <div class="col-8" style="margin-left:50px;margin-top:-10px;margin-bottom:-5px;">
                                             <strong>Kód:</strong>
@@ -181,10 +193,10 @@
             </button>
           </div>
           <div class="modal-body">
-            Ak vymažete študenta {{ student.name }} nie je možné to vrátiť späť.
+            Ak vymažete študenta '{{ student.name }}', nie je možné to vrátiť späť.
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Žrušiť</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušiť</button>
             <a href="{{ url_for('student_bp.delete_student',student_id=student.id) }}" type="button" class="btn btn-danger">Vymazať</a>
           </div>
         </div>
@@ -205,7 +217,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Zrušiť</button>
-            <a type="button" href="{{ url_for('student_bp.return_all',student_id=student.id) }}" class="btn btn-danger">Vrátiť</a>
+            <a type="button" href="{{ url_for('student_bp.return_all',student_id=student.id) }}" class="btn btn-info">Vrátiť</a>
           </div>
         </div>
       </div>
@@ -220,6 +232,25 @@
 
 
     <script>
+
+        // script to check input
+	    (function() {
+          'use strict';
+          window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+              form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
+          }, false);
+        })();
 
         function show(param_div_id) {
           if (param_div_id === 'operation1') {
