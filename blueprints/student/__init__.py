@@ -24,6 +24,7 @@ def landing_page():
 def landing_page_grade(grade):
     grades = Grade.query.all()
     cer_grade = Grade.query.filter(Grade.name == grade).first()
+    flash(f"Zobrazujú sa študenti z ročníka {cer_grade.name}","info")
     return render_template("student/landing_page.html", grades=grades, students=cer_grade.students)
 
 
@@ -36,7 +37,7 @@ def new_student():
     n_student = Student(name,grade,int(code))
     db_session.add(n_student)
     db_session.commit()
-    flash("New user successfully added", "success")
+    flash(f"Študent {n_student.name} bol úspešne pridaný", "success")
     return redirect(url_for("student_bp.landing_page"))
 
 
@@ -60,7 +61,7 @@ def move_all_s_up():
         student.grade = new_grade
         db_session.commit()
 
-    flash("All students were moved up in a grade", "success")
+    flash("Všetci študenti prešli do vyšieho ročníka", "success")
     return redirect(url_for("student_bp.landing_page"))
 
 
@@ -84,7 +85,7 @@ def move_all_s_down():
         student.grade = new_grade
         db_session.commit()
 
-    flash("All students were moved down in a grade", "success")
+    flash("Všetci študenti prešli do nižšieho ročníka", "success")
     return redirect(url_for("student_bp.landing_page"))
 
 
@@ -125,14 +126,14 @@ def rent_book(student_id):
     book = Book.query.filter(Book.code == int(request.form["code"])).first()
     if book:
         if book.student:
-            flash("Book with this code is already in use","danger")
+            flash("Učebnica s týmto kódom je už požičaná","danger")
         else:
             student = Student.query.filter(Student.id == student_id).first()
             student.books.append(book)
             db_session.commit()
-            flash("Book rented successfully", "success")
+            flash("Učebnica bola úspešne pridaná", "success")
     else:
-        flash("No book with this code !","danger")
+        flash("Učebnica s týmto kódom neexistuje","danger")
     return redirect(url_for("student_bp.view_student",student_id=student_id))
 
 
@@ -144,7 +145,7 @@ def return_book(student_id,book_id):
 
     student.books.remove(book)
     db_session.commit()
-    flash("Book returned successfully","success")
+    flash("Učebnica bola úspešne vrátená","success")
 
     return redirect(url_for("student_bp.view_student",student_id=student_id))
 
@@ -156,7 +157,7 @@ def return_all(student_id):
 
     student.books.clear()
     db_session.commit()
-    flash("All books returned successfully","success")
+    flash(f"Všetky učebnice žiaka {student.name} boli úspešne vrátené","success")
 
     return redirect(url_for("student_bp.view_student",student_id=student_id))
 
@@ -166,7 +167,7 @@ def delete_student(student_id):
     student = Student.query.filter(Student.id == student_id).first()
     db_session.delete(student)
     db_session.commit()
-    flash("Student deleted successfully","success")
+    flash(f"Študent {student.name} bol úspešne vymazaný","success")
     return redirect(url_for("student_bp.landing_page"))
 
 
@@ -182,7 +183,7 @@ def search_student2():
     if student:
         return redirect(url_for("student_bp.view_student",student_id=student.id))
 
-    flash("No student with this code !","danger")
+    flash("Študent s takýmto kódom neexistuje","danger")
     return render_template("student/search_student.html")
 
 
@@ -198,14 +199,7 @@ def add_mul_student(count):
         db_session.add(s)
         db_session.commit()
 
-    flash(str(count) + " students added successfully", "success")
-    return redirect(url_for("student_bp.landing_page"))
-
-
-@student_bp.route("read/from/excel_chart/")
-def read_from_excel():
-    df = pd.read_excel("static/files/students_chart.xlsx",usecols=[0,1,2,3,4])
-    print(df)
+    flash(str(count) + " študentov úspešne pridaných", "success")
     return redirect(url_for("student_bp.landing_page"))
 
 
@@ -227,19 +221,24 @@ def upload_file():
         wb_obj = openpyxl.load_workbook(file)
         sheet_obj = wb_obj.active
 
-        for i in range(1,sheet_obj.max_row):
-            name = sheet_obj.cell(row=i+1, column=2).value
-            code = sheet_obj.cell(row=i+1, column=3).value
-            grade_name = sheet_obj.cell(row=i+1, column=4).value
-            grade = Grade.query.filter(Grade.name == grade_name).first()
+        try:
+            for i in range(1,sheet_obj.max_row):
+                name = sheet_obj.cell(row=i+1, column=2).value
+                code = sheet_obj.cell(row=i+1, column=3).value
+                grade_name = sheet_obj.cell(row=i+1, column=4).value
+                grade = Grade.query.filter(Grade.name == grade_name).first()
 
-            s = Student(name,grade,code)
-            db_session.add(s)
-            db_session.commit()
+                s = Student(name,grade,code)
+                db_session.add(s)
+                db_session.commit()
+        except:
+            flash("Nastala chyba pri nahrávaní. Ujistite sa, či študenti z tabuľky nie su už v systéme", "danger")
+            return redirect(url_for("student_bp.landing_page"))
 
-        flash("Students from chart successfully added","success")
+        flash("Študenti z execelu boli úspešne pridaný","success")
         return redirect(url_for("student_bp.landing_page"))
 
-    flash("Something went wrong, contact support","danger")
+    alow_f_string = ' / '.join(map(str, ALLOWED_EXTENSIONS))
+    flash(f"Súbor nie je podporovaný. Typ súboru musí byť: {alow_f_string}","danger")
     return redirect(url_for("student_bp.landing_page"))
 
