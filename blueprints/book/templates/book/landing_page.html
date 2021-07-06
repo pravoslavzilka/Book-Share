@@ -41,7 +41,7 @@
 
     <div class="container" style="padding-top:100px;">
         <div class="row">
-            <div class="card student-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:180px;">
+            <div class="card student-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:210px;">
               <div class="card-body">
                 <h3 class="card-title" >Všetky učebnice</h3>
                 <div>
@@ -56,6 +56,9 @@
                     <div style="margin-top:-8px;">
                         <strong>Celkovo: </strong>
                         <label>{{ ctbooks }}</label>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('book_bp.list_of_books') }}" type="submit" style="margin-top:10px;" class="btn btn-sm btn-secondary ">Zobraziť zoznam</a>
                     </div>
                 </div>
               </div>

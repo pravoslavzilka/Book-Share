@@ -100,6 +100,7 @@
                       <th scope="col">#</th>
                       <th scope="col">Kód</th>
                       <th scope="col">Študent</th>
+                      <th scope="col">Vrátiť</th>
                       <th scope="col">Odstrániť</th>
                     </tr>
                   </thead>
@@ -110,6 +111,7 @@
                               <th scope="row">{{ book.id }}</th>
                               <td>{{ book.code }}</td>
                               <td>{{ book.student.name }}</td>
+                              <td><a class="btn btn-sm btn-danger" href="#">Vrátiť</a></td>
                               <td><a class="btn btn-sm btn-danger" href="#">Odstrániť</a></td>
                             </tr>
                         {% else %}
@@ -117,6 +119,7 @@
                               <th scope="row">{{ book.id }}</th>
                               <td>{{ book.code }}</td>
                               <td>{{ book.student.name }}</td>
+                              <td><a class="btn btn-sm btn-info" href="#">Vrátiť</a></td>
                               <td><a class="btn btn-sm btn-danger" href="#">Odstrániť</a></td>
                             </tr>
                         {% endif %}

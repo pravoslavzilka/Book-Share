@@ -98,14 +98,24 @@ def view_student(student_id):
 
 
 @student_bp.route("/change_grade/for/<int:student_id>/",methods=["POST"])
-def change_grade(student_id):
+def change_student(student_id):
+    new_name = request.form["student_name"]
+    new_code = request.form["student_code"]
+    new_grade = Grade.query.filter(Grade.name == request.form["student_grade"]).first()
 
-    new_grade = Grade.query.filter(Grade.name == request.form["grade"]).first()
     student = Student.query.filter(Student.id == student_id).first()
+    code_student = Student.query.filter(Student.code == new_code).first()
 
+    if code_student:
+        flash("Študent s týmto kódom už existuje","danger")
+        return redirect(url_for("student_bp.view_student",student_id=student_id))
+
+    student.name = new_name
+    student.code = new_code
     student.grade = new_grade
     db_session.commit()
-    flash("Grade changed successfully", "success")
+
+    flash(f"Údaje študenta {student.name} boli úspešne zmenené", "success")
     return redirect(url_for("student_bp.view_student",student_id=student_id))
 
 
