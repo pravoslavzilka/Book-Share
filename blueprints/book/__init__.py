@@ -51,28 +51,11 @@ def books_state(book_state):
     return render_template("book/book_list.html",books=books,book_types=book_types)
 
 
-@book_bp.route("/add_new/",methods=["POST"])
-def add_book():
-    book_code = request.form["book_code"]
-    book = Book.query.filter(Book.code == book_code).first()
-    if book:
-        flash("Book with this code already exist","danger")
-        return redirect(url_for("book_bp.landing_page"))
-
-    book_type = BookType.query.filter(BookType.name == request.form["book_type"]).first()
-    new_book = Book(int(book_code),book_type)
-
-    db_session.add(new_book)
-    db_session.commit()
-
-    flash("New book successfully added", "success")
-    return redirect(url_for("book_bp.landing_page"))
-
-
 @book_bp.route("/add_new/in/<bt_name>/",methods=["POST"])
 def add_book_with_type(bt_name):
     book_code = request.form["book_code"]
     book = Book.query.filter(Book.code == book_code).first()
+
     if book:
         flash("Učebnica s týmto kódom už existuje", "danger")
         return redirect(url_for("book_bp.book_type_page",bt_name=bt_name))
@@ -81,7 +64,11 @@ def add_book_with_type(bt_name):
     new_book = Book(int(book_code), book_type)
 
     db_session.add(new_book)
-    db_session.commit()
+    try:
+        db_session.commit()
+    except OverflowError:
+        flash("Neplatný kód", "danger")
+        return redirect(url_for("book_bp.book_type_page", bt_name=bt_name))
 
     flash(f"Učebnica s kódom {book_code} úspešne pridaná","success")
     return redirect(url_for("book_bp.book_type_page", bt_name=bt_name))
@@ -109,14 +96,18 @@ def return_book():
         flash(f"Kniha s kódom {book.code} bola úspešne vrátená","success")
         return redirect(url_for("book_bp.return_book_view"))
 
-    flash("Učebnica s takýmto kódom neexistuje","danger")
+    flash("Neplatný kód","danger")
     return redirect(url_for("book_bp.return_book_view"))
 
 
 @book_bp.route("/return/from/list/",methods=["POST"])
 def return_book_from_list():
     code = int(request.form["book_code"])
-    book = Book.query.filter(Book.code == code).first()
+    try:
+        book = Book.query.filter(Book.code == code).first()
+    except OverflowError:
+        flash("Neplatný kód", "danger")
+        return redirect(url_for("book_bp.list_of_books"))
 
     if book:
         if book.student:
@@ -126,14 +117,18 @@ def return_book_from_list():
         flash(f"Učebnica s kódom {book.code} bola úspešne vrátená", "success")
         return redirect(url_for("book_bp.list_of_books"))
 
-    flash("Žiadn učebnica s týmto kódom", "danger")
+    flash("Neplatný kód", "danger")
     return redirect(url_for("book_bp.list_of_books"))
 
 
 @book_bp.route("/return/with/type/",methods=["POST"])
 def return_book_with_type():
     code = int(request.form["book_code"])
-    book = Book.query.filter(Book.code == code).first()
+    try:
+        book = Book.query.filter(Book.code == code).first()
+    except OverflowError:
+        flash("Neplatný kód", "danger")
+        return redirect(url_for("book_bp.book_type_page"))
 
     if book:
         if book.student:
@@ -143,25 +138,38 @@ def return_book_with_type():
         flash(f"Učebnica s kódom {book.code} bola úspešne vrátená", "success")
         return redirect(url_for("book_bp.book_type_page",bt_name=book.book_type.name))
 
-    flash("Žiadn učebnica s týmto kódom", "danger")
+    flash("Neplatný kód", "danger")
     return redirect(url_for("book_bp.book_type_page",bt_name=book.book_type.name))
 
 
 @book_bp.route("/delete/",methods=['POST'])
 def delete_book():
     book_code = int(request.form["book_code"])
-    book = Book.query.filter(Book.code == book_code).first()
-    book_type = BookType.query.filter(BookType.id == book.book_type_id).first()
-    db_session.delete(book)
-    db_session.commit()
-    flash(f"Kniha s kódom {book.code} bola úspešne odstránená","success")
-    return redirect(url_for("book_bp.book_type_page",bt_name=book_type.name))
+    try:
+        book = Book.query.filter(Book.code == book_code).first()
+    except OverflowError:
+        flash("Neplatný kód", "danger")
+        return redirect(url_for("book_bp.list_of_books"))
+
+    if book:
+        book_type = BookType.query.filter(BookType.id == book.book_type_id).first()
+        db_session.delete(book)
+        db_session.commit()
+        flash(f"Kniha s kódom {book.code} bola úspešne odstránená","success")
+        return redirect(url_for("book_bp.book_type_page",bt_name=book_type.name))
+
+    flash("Neplatný kód", "danger")
+    return redirect(url_for("book_bp.list_of_books"))
 
 
 @book_bp.route("/delete/from/list/",methods=['POST'])
 def delete_book_from_list():
     book_code = int(request.form["book_code"])
-    book = Book.query.filter(Book.code == book_code).first()
+    try:
+        book = Book.query.filter(Book.code == book_code).first()
+    except OverflowError:
+        flash("Neplatný kód","danger")
+        return redirect(url_for("book_bp.list_of_books"))
 
     db_session.delete(book)
     db_session.commit()
@@ -174,34 +182,17 @@ def add_book_type():
     req_bt = request.form["book_type"]
     book_type = BookType.query.filter(BookType.name == req_bt).first()
     if book_type:
-        flash("This book type already exist","danger")
+        flash("Typ tejto učibnice bol už pridaný","danger")
         return redirect(url_for("book_bp.landing_page"))
 
     new_bt = BookType(req_bt)
     db_session.add(new_bt)
-    db_session.commit()
-
-    flash("New book type successfully added", "success")
-    return redirect(url_for("book_bp.landing_page"))
-
-
-@book_bp.route("/generate/form/",methods=["POST"])
-def generate_form():
-    count = int(request.form["count"])
-    sl_bt = request.form["sl_bt"]
-    book_types = BookType.query.all()
-    return render_template("book/book_add_form.html",count=count,sl_bt=sl_bt,book_types=book_types)
-
-
-@book_bp.route("add/multiple/<int:count>/",methods=["POST"])
-def add_multiple_book(count):
-    book_type = BookType.query.filter(BookType.name == request.form["book_type"]).first()
-
-    for i in range(count):
-        code = request.form["book_code" + str(i)]
-        b = Book(code,book_type)
-        db_session.add(b)
+    try:
         db_session.commit()
+    except OverflowError:
+        flash("Neplatné meno", "danger")
+        return redirect(url_for("book_bp.landing_page"))
 
-    flash(str(count) + " books added successfully","success")
+    flash(f"Nový typ učebníc {req_bt} úspešne pridaný", "success")
     return redirect(url_for("book_bp.landing_page"))
+
