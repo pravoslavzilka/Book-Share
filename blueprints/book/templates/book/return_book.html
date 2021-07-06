@@ -154,9 +154,12 @@
           <div class="card card-signin my-5">
             <div class="card-body">
               <h5 class="card-title text-center">Book code:</h5>
-              <form class="form-signin" method="post" action="{{url_for('book_bp.return_book')}}">
+              <form class="form-signin needs-validation" method="post" action="{{url_for('book_bp.return_book')}}" novalidate>
                 <div class="form-label-group">
-                  <input type="number" id="inputEmail" name="book_code" class="form-control" placeholder="Enter your student's code" required autofocus>
+                  <input type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="15"  id="inputEmail" name="book_code" class="form-control" placeholder="Enter your student's code" required autofocus>
+                  <div style="margin-left:10px;" class="invalid-feedback">
+                    Zadajte platný kód učebnice
+                  </div>
                   <label for="inputEmail">Code</label>
                 </div>
                 <button class="btn btn-lg btn-danger btn-block text-uppercase" type="submit">Return</button>
@@ -167,5 +170,26 @@
         </div>
       </div>
     </div>
+
+    <script>
+        // script to check input
+	    (function() {
+          'use strict';
+          window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+              form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
+          }, false);
+        })();
+    </script>
 
 {% endblock content %}
