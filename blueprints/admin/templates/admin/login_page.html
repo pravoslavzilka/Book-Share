@@ -154,14 +154,20 @@
           <div class="card card-signin my-5">
             <div class="card-body">
               <h5 class="card-title text-center">Sign In</h5>
-              <form class="form-signin" method="post" action="{{url_for('admin_bp.sign_in_page2')}}">
+              <form class="form-signin needs-validation" method="post" action="{{url_for('admin_bp.sign_in_page2')}}" novalidate>
                 <div class="form-label-group">
-                  <input type="email" id="inputEmail" name="email" class="form-control" placeholder="Email address" required autofocus>
+                  <input type="email" id="inputEmail" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="25" name="email" class="form-control" placeholder="Email address" required autofocus>
+                  <div style="margin-left:10px;" class="invalid-feedback">
+                    Zadajte platný email
+                  </div>
                   <label for="inputEmail">Email address</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+                  <input type="password" id="inputPassword" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="25" name="password" class="form-control" placeholder="Password" required>
+                  <div style="margin-left:10px;" class="invalid-feedback">
+                    Zadajte platné heslo
+                  </div>
                   <label for="inputPassword">Password</label>
                 </div>
 
@@ -177,5 +183,26 @@
         </div>
       </div>
     </div>
+
+    <script>
+        // script to check input
+	    (function() {
+          'use strict';
+          window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+              form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
+          }, false);
+        })();
+    </script>
 
 {% endblock content %}

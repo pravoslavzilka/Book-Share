@@ -1,9 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, send_file
 from database import db_session
 from models import Grade, Student, Book
-import pandas as pd
 from werkzeug.utils import secure_filename
-import os
 import openpyxl
 
 
@@ -24,8 +22,12 @@ def landing_page():
 def landing_page_grade(grade):
     grades = Grade.query.all()
     cer_grade = Grade.query.filter(Grade.name == grade).first()
-    flash(f"Zobrazujú sa študenti z ročníka {cer_grade.name}","info")
-    return render_template("student/landing_page.html", grades=grades, students=cer_grade.students)
+
+    if cer_grade:
+        flash(f"Zobrazujú sa študenti z ročníka {cer_grade.name}","info")
+        return render_template("student/landing_page.html", grades=grades, students=cer_grade.students)
+    flash(f"Trieda {grade} neexistuje","danger")
+    return redirect(url_for("student_bp.landing_page"))
 
 
 @student_bp.route("/new_student/",methods=["POST"])
@@ -34,10 +36,17 @@ def new_student():
     code = request.form["student_code"]
     s_grade = request.form["grade"]
     grade = Grade.query.filter(Grade.name == s_grade).first()
-    n_student = Student(name,grade,int(code))
-    db_session.add(n_student)
-    db_session.commit()
-    flash(f"Študent {n_student.name} bol úspešne pridaný", "success")
+    code_student = Student.query.filter(Student.code == code).first()
+    if code_student:
+        flash(f"Žiak s kódom {code} už existuje","danger")
+        return redirect(url_for("student_bp.landing_page"))
+    if grade:
+        n_student = Student(name,grade,int(code))
+        db_session.add(n_student)
+        db_session.commit()
+        flash(f"Študent {n_student.name} bol úspešne pridaný", "success")
+        return redirect(url_for("student_bp.landing_page"))
+    flash(f"Trieda {s_grade} neexistuje", "danger")
     return redirect(url_for("student_bp.landing_page"))
 
 
@@ -91,11 +100,17 @@ def move_all_s_down():
 
 @student_bp.route("/view/<int:student_id>/")
 def view_student(student_id):
+    try:
+        student = Student.query.filter(Student.id == student_id).first()
+    except OverflowError:
+        flash("Neplatný kód študenta", "danger")
+        return redirect(url_for("student_bp.search_student"))
 
-    student = Student.query.filter(Student.id == student_id).first()
-    grades = Grade.query.all()
-
-    return render_template("student/student_page.html",student=student, grades=grades)
+    if student:
+        grades = Grade.query.all()
+        return render_template("student/student_page.html",student=student, grades=grades)
+    flash("Neplatný kód študenta","danger")
+    return redirect(url_for("student_bp.search_student"))
 
 
 @student_bp.route("/change_grade/for/<int:student_id>/",methods=["POST"])
@@ -105,10 +120,13 @@ def change_student(student_id):
     new_grade = Grade.query.filter(Grade.name == request.form["student_grade"]).first()
 
     student = Student.query.filter(Student.id == student_id).first()
+    if not student:
+        flash("Neplatný kód študenta","danger")
+        return redirect(url_for("student_bp.landing_page"))
     code_student = Student.query.filter(Student.code == new_code).first()
 
     if code_student:
-        flash("Študent s týmto kódom už existuje","danger")
+        flash("Študent s takýmto kódom už existuje","danger")
         return redirect(url_for("student_bp.view_student",student_id=student_id))
 
     student.name = new_name
@@ -122,18 +140,25 @@ def change_student(student_id):
 
 @student_bp.route("/<int:student_id>/rent_book/",methods=["POST"])
 def rent_book(student_id):
+    try:
+        book = Book.query.filter(Book.code == int(request.form["code"])).first()
+    except OverflowError:
+        flash("Neplatný kód učebnice","danger")
+        return redirect(url_for("student_bp.view_student", student_id=student_id))
 
-    book = Book.query.filter(Book.code == int(request.form["code"])).first()
     if book:
         if book.student:
             flash("Učebnica s týmto kódom je už požičaná","danger")
         else:
             student = Student.query.filter(Student.id == student_id).first()
-            student.books.append(book)
-            db_session.commit()
-            flash("Učebnica bola úspešne pridaná", "success")
+            if student:
+                student.books.append(book)
+                db_session.commit()
+                flash("Učebnica bola pridaná", "success")
+            else:
+                return redirect(url_for("student_bp.search_student"))
     else:
-        flash("Učebnica s týmto kódom neexistuje","danger")
+        flash("Neplatný kód","danger")
     return redirect(url_for("student_bp.view_student",student_id=student_id))
 
 
@@ -143,17 +168,21 @@ def return_book(student_id,book_id):
     book = Book.query.filter(Book.id == book_id).first()
     student = Student.query.filter(Student.id == student_id).first()
 
-    student.books.remove(book)
-    db_session.commit()
-    flash("Učebnica bola úspešne vrátená","success")
+    if book and student:
+        student.books.remove(book)
+        db_session.commit()
+        flash("Učebnica bola vrátená","success")
 
-    return redirect(url_for("student_bp.view_student",student_id=student_id))
+        return redirect(url_for("student_bp.view_student",student_id=student_id))
+    else:
+        return redirect(url_for("student_bp.landing_page"))
 
 
 @student_bp.route("/<int:student_id>/return_all/")
 def return_all(student_id):
-
     student = Student.query.filter(Student.id == student_id).first()
+    if not student:
+        return redirect(url_for("student_bp.landing_page"))
 
     student.books.clear()
     db_session.commit()
@@ -165,6 +194,8 @@ def return_all(student_id):
 @student_bp.route("/delete/<int:student_id>/")
 def delete_student(student_id):
     student = Student.query.filter(Student.id == student_id).first()
+    if not student:
+        return redirect(url_for("student_bp.landing_page"))
     db_session.delete(student)
     db_session.commit()
     flash(f"Študent {student.name} bol úspešne vymazaný","success")
@@ -179,28 +210,13 @@ def search_student():
 @student_bp.route("/search_student/",methods=["POST"])
 def search_student2():
     student_code = request.form["student_code"]
-    student = Student.query.filter(Student.code == student_code).first()
-    if student:
-        return redirect(url_for("student_bp.view_student",student_id=student.id))
+    if 1 < len(student_code) < 25:
+        student = Student.query.filter(Student.code == student_code).first()
+        if student:
+            return redirect(url_for("student_bp.view_student",student_id=student.id))
 
-    flash("Študent s takýmto kódom neexistuje","danger")
+    flash("Neplatný kód","danger")
     return render_template("student/search_student.html")
-
-
-@student_bp.route("add/multiple/<int:count>/",methods=["POST"])
-def add_mul_student(count):
-    grade = Grade.query.filter(Grade.name == request.form["grade"]).first()
-
-    for i in range(count):
-        name = request.form["student" + str(i)]
-        code = request.form["student_code" + str(i)]
-
-        s = Student(name,grade,code)
-        db_session.add(s)
-        db_session.commit()
-
-    flash(str(count) + " študentov úspešne pridaných", "success")
-    return redirect(url_for("student_bp.landing_page"))
 
 
 def allowed_file(filename):
@@ -238,7 +254,7 @@ def upload_file():
         flash("Študenti z execelu boli úspešne pridaný","success")
         return redirect(url_for("student_bp.landing_page"))
 
-    alow_f_string = ' / '.join(map(str, ALLOWED_EXTENSIONS))
-    flash(f"Súbor nie je podporovaný. Typ súboru musí byť: {alow_f_string}","danger")
+    allow_f_string = ' / '.join(map(str, ALLOWED_EXTENSIONS))
+    flash(f"Súbor nie je podporovaný. Typ súboru musí byť: {allow_f_string}","danger")
     return redirect(url_for("student_bp.landing_page"))
 

@@ -31,6 +31,16 @@ def welcome_page():
     return redirect(url_for("student_bp.landing_page"))
 
 
+@app.errorhandler(404)
+def error_404(error):
+    return render_template("404.html")
+
+
+@app.errorhandler(405)
+def error_405(error):
+    return render_template("404.html")
+
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()

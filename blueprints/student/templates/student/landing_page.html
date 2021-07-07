@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    List of students
+    Študenti
 {% endblock title %}
 
 
@@ -75,9 +75,9 @@
 			<div class="collapse " id="collapseExample2">
 			  <div class="card card-body ">
                 <strong class="" style="padding-bottom:5px;font-size: 18px;">Nový študent</strong>
-			    <form class="form-inline needs-validation" action="{{url_for('student_bp.new_student')}}" method="post" style="margin-top:10px;">
-				  <input name="student_name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Meno">
-                  <input name="student_code"  type="number" class="form-control mb-2 mr-sm-2"  placeholder="Kód">
+			    <form class="form-inline needs-validation" action="{{url_for('student_bp.new_student')}}" method="post" style="margin-top:10px;" novalidate>
+				  <input name="student_name"  type="text" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Meno" required oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="30">
+                  <input name="student_code"  type="number" class="form-control mb-2 mr-sm-2"  placeholder="Kód" required oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="20">
                     <select class="form-control" name="grade" style="margin-right:10px;margin-bottom:10px;" required>
                       {% for grade in grades %}
                         <option>{{ grade.name }}</option>
@@ -199,6 +199,24 @@
     </div>
 
     <script>
+        // script to check input
+	    (function() {
+          'use strict';
+          window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+              form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+              }, false);
+            });
+          }, false);
+        })();
 
         $(document).ready(function(){
           $("#live-search-box").on("keyup", function() {
