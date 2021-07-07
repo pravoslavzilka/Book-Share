@@ -203,3 +203,27 @@ def add_book_type():
     flash(f"Nový typ učebníc {req_bt} bol úspešne pridaný", "success")
     return redirect(url_for("book_bp.landing_page"))
 
+
+@book_bp.route("/delete/type/<int:type_id>/")
+def delete_type(type_id):
+
+    try:
+        book_type = BookType.query.filter(BookType.id == type_id).first()
+    except OverflowError:
+        flash("Neplataný kód", "danger")
+        return redirect(url_for("book_bp.landing_page"))
+
+    count_of_books = 0
+    if book_type:
+        for index,book in enumerate(book_type.books):
+            db_session.delete(book)
+            count_of_books += 1
+
+        db_session.delete(book_type)
+        db_session.commit()
+        flash(f"Typ učebnice {book_type.name} bol úspešne vymazaný a s ním {count_of_books} učebníc","success")
+        return redirect(url_for("book_bp.landing_page"))
+
+    flash("Neplataný kód", "danger")
+    return redirect(url_for("book_bp.landing_page"))
+
