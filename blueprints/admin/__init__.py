@@ -22,15 +22,15 @@ def sign_in_page2():
             login_user(user,remember=True)
         except:
             login_user(user)
-        flash("Welcome back !","success")
+        flash("Vitajte späť","success")
         return redirect(url_for("welcome_page"))
 
-    flash("Incorrect email or password","danger")
+    flash("Chybný email alebo heslo","danger")
     return render_template("admin/login_page.html")
 
 
 @admin_bp.route("/sign_out")
 def sign_out():
     logout_user()
-    flash("We looking forward to see you again !","success")
+    flash("Boli ste odhlásený","success")
     return redirect(url_for("welcome_page"))

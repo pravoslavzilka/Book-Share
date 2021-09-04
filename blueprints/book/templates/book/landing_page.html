@@ -67,11 +67,11 @@
 	            	  <div class="card card-body">
                         <strong class="" style="padding-bottom:5px;font-size: 18px;">Nová učebnica</strong>
 	            	    <form class="needs-validation" action="{{ url_for('book_bp.add_book_type') }}" method="post" style="margin-top:10px;" novalidate>
-	            		  <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="30" name="book_name"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Názov" required>
+	            		  <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="book_name"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Názov" required>
                           <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
                             Zadajte platný názov učebnice
                           </div>
-                          <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="30" name="book_author"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Autor" required>
+                          <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="book_author"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Autor" required>
                           <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
                             Zadajte platného autora učebnice
                           </div>
@@ -80,7 +80,7 @@
 	            	  </div>
 	            	</div>
 	           </div>
-               <div class="card card-body d-block d-sm-none" style="margin:-15px;margin-top:2px;">
+                <div class="card card-body d-block d-sm-none" style="margin:-15px;margin-top:2px;">
                         <strong class="" style="padding-bottom:5px;font-size: 18px;">Nová učebnica</strong>
 	            	    <form class="needs-validation" action="{{ url_for('book_bp.add_book_type') }}" method="post" style="margin-top:10px;" novalidate>
 	            		  <input name="name"  type="text" class="form-control mb-2 mr-sm-2" placeholder="Názov" required>
@@ -95,8 +95,28 @@
 	            		</form>
 	            	  </div>
                <div style="margin-top:20px;" class="d-flex justify-content-center">
+	            	<div class="collapse col-12" id="book-excel">
+	            	  <div class="card card-body">
+                        <strong style="padding-bottom:5px;font-size: 18px;">Načítať učebnicu z excelu</strong>
+	            	    <form class="needs-validation" action="{{ url_for('book_bp.upload_file') }}" method="post" style="margin-top:10px;" enctype="multipart/form-data" novalidate>
+                          <div class="custom-file">
+                            <input type="file" name="file" class="custom-file-input" id="customFile" required>
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                          </div>
+                          <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
+                            Vyber platný súbor
+                          </div>
+                          <button style="margin-top:10px;" type="submit" class="btn btn-success float-right">Načítať</button>
+                        </form>
+	            	  </div>
+	            	</div>
+	           </div>
+               <div style="margin-top:20px;" class="d-flex justify-content-center">
                     <button id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-book" aria-expanded="false" aria-controls="new-book">
 	                   + Pridať učebnicu
+	                </button>
+                   <button id="excel-book" style="margin-left:5px;" class="btn btn-secondary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#book-excel" aria-expanded="false" aria-controls="book-excel">
+	                   + Načítať excel
 	                </button>
 
                </div>

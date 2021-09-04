@@ -1,10 +1,13 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from database import db_session
 from models import Grade, Student, Book, BookType
+from werkzeug.utils import secure_filename
+import openpyxl
 
 
 book_bp = Blueprint("book_bp",__name__,template_folder="templates")
 
+ALLOWED_EXTENSIONS = {'xlsx','xlsm','xltx','xltm'}
 
 @book_bp.route("/all/")
 def landing_page():
@@ -225,5 +228,61 @@ def delete_type(type_id):
         return redirect(url_for("book_bp.landing_page"))
 
     flash("Neplataný kód", "danger")
+    return redirect(url_for("book_bp.landing_page"))
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@book_bp.route('/upload/source/excel/',methods=["POST"])
+def upload_file():
+
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        wb_obj = openpyxl.load_workbook(file)
+        sheet_obj = wb_obj.active
+
+        try:
+            for i in range(1,sheet_obj.max_row):
+                name = sheet_obj.cell(row=i+1, column=1).value
+                code = sheet_obj.cell(row=i+1, column=3).value
+
+                book_type = BookType.query.filter(BookType.name == name).first()
+                if book_type:
+                    new_book = Book(code,book_type)
+                    db_session.add(new_book)
+                elif name == ": Geografický atlas pre ZŠ a SŠ":
+                    book_type = BookType.query.filter(BookType.name == "Geografický atlas pre ZŠ a S").first()
+                    if book_type:
+                        new_book = Book(code, book_type)
+                        db_session.add(new_book)
+                    else:
+                        print("FAIL")
+                elif name == None:
+                    pass
+                else:
+                    book_type = BookType.query.filter(BookType.id == 27).first()
+                    if book_type:
+                        new_book = Book(code, book_type)
+                        db_session.add(new_book)
+                    else:
+                        print("FAIL")
+            db_session.commit()
+        except:
+            flash("Nastala chyba pri nahrávaní. Ujistite sa, či študenti z tabuľky nie su už v systéme", "danger")
+            return redirect(url_for("book_bp.landing_page"))
+
+        flash("Učebnice z execelu boli úspešne pridané","success")
+        return redirect(url_for("book_bp.landing_page"))
+
+    allow_f_string = ' / '.join(map(str, ALLOWED_EXTENSIONS))
+    flash(f"Súbor nie je podporovaný. Typ súboru musí byť: {allow_f_string}","danger")
     return redirect(url_for("book_bp.landing_page"))
 
