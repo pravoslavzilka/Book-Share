@@ -153,7 +153,7 @@
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
           <div class="card card-signin my-5">
             <div class="card-body">
-              <h5 class="card-title text-center">Nájst študenta:</h5>
+              <h5 class="card-title text-center">Zadaj svoj kód:</h5>
               <form class="form-signin needs-validation" method="post" action="{{url_for('student_bp.search_student2')}}" novalidate>
                 <div class="form-label-group">
                   <input type="number" id="studentId" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="15" name="student_code" class="form-control" placeholder="Kód" required autofocus>

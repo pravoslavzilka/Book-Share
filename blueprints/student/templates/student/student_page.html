@@ -28,7 +28,11 @@
                 display:none;
             }
         }
-
+        {% if not current_user.is_authenticated %}
+            #main_place {
+                padding-bottom:50px;
+            }
+        {% endif %}
     </style>
 
 
@@ -61,8 +65,11 @@
                         <strong>Kód: </strong>
                         <label>{{ student.code }}</label>
                     </div>
-                    <button onclick="show('operation1')" style="margin-top:10px;" class="btn btn-sm btn-secondary ">Upraviť</button>
+                    {% if current_user.is_authenticated %}
+                        <button onclick="show('operation1')" style="margin-top:10px;" class="btn btn-sm btn-secondary ">Upraviť</button>
+                    {% endif %}
                 </div>
+                {% if current_user.is_authenticated %}
                 <div id="operation1" style="display:none">
                     <form method="post" class="needs-validation" action="{{ url_for('student_bp.change_student',student_id = student.id) }}">
                       <h4 style="padding-bottom:10px;">Upraviť údaje:</h4>
@@ -105,10 +112,11 @@
                     </form>
 
                 </div>
+                {% endif %}
 
 
               </div>
-              <div style="margin-top:10px;" class="d-flex justify-content-center">
+              <div style="margin-top:10px;" class="d-flex justify-content-center add-book-m">
 	            	<div class="collapse " id="new-book">
 	            	  <div class="card card-body ">
                         <strong class="" style="padding-bottom:5px;font-size: 18px;">Pridať učebnicu</strong>
@@ -122,7 +130,7 @@
 	            	  </div>
 	            	</div>
 	           </div>
-               <div class="card card-body d-block d-sm-none" style="margin:-15px;margin-top:2px;">
+               <div class="card card-body d-block d-sm-none add-book-m" style="margin:-15px;margin-top:2px;">
                         <strong class="" style="padding-bottom:5px;font-size: 18px;">Pridať učebnicu</strong>
 	            	    <form class="form-inline needs-validation" action="{{url_for('student_bp.rent_book',student_id=student.id)}}" method="post" style="margin-top:10px;" novalidate>
 	            		  <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="15" name="code"  type="number" class="form-control mb-2 mr-sm-2" id="validationCustom01" placeholder="Kód" required>
@@ -136,9 +144,11 @@
                     <button id="add-book" class="btn btn-primary utilities-buttons" onclick="moveModal" type="button" data-toggle="collapse" data-target="#new-book" aria-expanded="false" aria-controls="new-book">
 	                   + Pridať učebnicu
 	                </button>
-                    <button type="button" style="margin-left:5px;" class="btn btn-info utilities-buttons" data-toggle="modal" data-target="#exampleModal56">
-                      Vrátiť všetky
-                    </button>
+                    {% if current_user.is_authenticated %}
+                        <button type="button" style="margin-left:5px;" class="btn btn-info utilities-buttons" data-toggle="modal" data-target="#exampleModal56">
+                          Vrátiť všetky
+                        </button>
+                    {% endif %}
                </div>
             </div>
             <div id="book-list" style="" class="book-list col-md-8 col-lg-8 col-sm-12 col-xs-12">
@@ -162,9 +172,11 @@
                                             <strong>Autor:</strong>
                                             <label>{{ book.book_type.author }}</label>
                                         </div>
-                                        <div>
-                                            <a class="btn btn-info float-right btn-sm" href="{{ url_for('student_bp.return_book',student_id=student.id,book_id=book.id) }}">Vrátiť</a>
-                                        </div>
+                                        {% if current_user.is_authenticated %}
+                                            <div>
+                                                <a class="btn btn-info float-right btn-sm" href="{{ url_for('student_bp.return_book',student_id=student.id,book_id=book.id) }}">Vrátiť</a>
+                                            </div>
+                                        {% endif %}
                                         <div class="col-8" style="margin-left:50px;margin-top:-10px;margin-bottom:-5px;">
                                             <strong>Kód:</strong>
                                             <label>{{ book.code }}</label>
@@ -182,7 +194,7 @@
         </div>
     </div>
 
-
+    {% if current_user.is_authenticated %}
     <div class="modal fade" id="ar_u_s" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -225,9 +237,10 @@
 
 
 
-    <div class="d-flex justify-content-center" style="margin-top:130px;">
-        <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#ar_u_s">Vymazať študenta</button>
-    </div>
+        <div class="d-flex justify-content-center" style="margin-top:130px;">
+            <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#ar_u_s">Vymazať študenta</button>
+        </div>
+    {% endif %}
 
 
 

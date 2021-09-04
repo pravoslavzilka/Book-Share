@@ -3,7 +3,7 @@ from blueprints.admin.__init__ import admin_bp
 from blueprints.student.__init__ import student_bp
 from blueprints.book.__init__ import book_bp
 from database import db_session
-from flask_login import LoginManager
+from flask_login import LoginManager, login_required
 from models import User
 import os
 
@@ -21,14 +21,14 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "admin_bp_.sign_in_page"
+login_manager.login_view = "admin_bp.sign_in_page"
 login_manager.login_message = "Please sign in to access this page"
 login_manager.login_message_category = "info"
 
 
 @app.route("/")
 def welcome_page():
-    return redirect(url_for("student_bp.landing_page"))
+    return redirect(url_for("student_bp.search_student"))
 
 
 @app.errorhandler(404)

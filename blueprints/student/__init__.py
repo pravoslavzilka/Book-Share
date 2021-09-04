@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash, send_file
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from database import db_session
 from models import Grade, Student, Book
 from werkzeug.utils import secure_filename
+from flask_login import login_required,current_user
 import openpyxl
+import random
+import string
 
 
 student_bp = Blueprint("student_bp",__name__,template_folder="templates")
@@ -12,6 +15,7 @@ UPLOAD_FOLDER = '/path/files'
 
 
 @student_bp.route("/all/")
+@login_required
 def landing_page():
     grades = Grade.query.all()
     students = Student.query.all()
@@ -19,6 +23,7 @@ def landing_page():
 
 
 @student_bp.route("/grade/<grade>/")
+@login_required
 def landing_page_grade(grade):
     grades = Grade.query.all()
     cer_grade = Grade.query.filter(Grade.name == grade).first()
@@ -31,6 +36,7 @@ def landing_page_grade(grade):
 
 
 @student_bp.route("/new_student/",methods=["POST"])
+@login_required
 def new_student():
     name = request.form["student_name"]
     code = request.form["student_code"]
@@ -51,6 +57,7 @@ def new_student():
 
 
 @student_bp.route("/move_all_students_up/")
+@login_required
 def move_all_s_up():
 
     grades = ["Prima", "Sekunda", "Tercia", "Kvarta", "Kvinta", "Sexta", "Septima", "Oktava",
@@ -75,6 +82,7 @@ def move_all_s_up():
 
 
 @student_bp.route("/move_all_students_down/")
+@login_required
 def move_all_s_down():
 
     grades = ["Prima", "Sekunda", "Tercia", "Kvarta", "Kvinta", "Sexta", "Septima", "Oktava",
@@ -114,6 +122,7 @@ def view_student(student_id):
 
 
 @student_bp.route("/change_grade/for/<int:student_id>/",methods=["POST"])
+@login_required
 def change_student(student_id):
     new_name = request.form["student_name"]
     new_code = request.form["student_code"]
@@ -125,7 +134,7 @@ def change_student(student_id):
         return redirect(url_for("student_bp.landing_page"))
     code_student = Student.query.filter(Student.code == new_code).first()
 
-    if code_student:
+    if code_student and code_student.id != student.id:
         flash("Študent s takýmto kódom už existuje","danger")
         return redirect(url_for("student_bp.view_student",student_id=student_id))
 
@@ -163,6 +172,7 @@ def rent_book(student_id):
 
 
 @student_bp.route("/<int:student_id>/return_book/<int:book_id>/")
+@login_required
 def return_book(student_id,book_id):
 
     book = Book.query.filter(Book.id == book_id).first()
@@ -179,6 +189,7 @@ def return_book(student_id,book_id):
 
 
 @student_bp.route("/<int:student_id>/return_all/")
+@login_required
 def return_all(student_id):
     student = Student.query.filter(Student.id == student_id).first()
     if not student:
@@ -192,6 +203,7 @@ def return_all(student_id):
 
 
 @student_bp.route("/delete/<int:student_id>/")
+@login_required
 def delete_student(student_id):
     student = Student.query.filter(Student.id == student_id).first()
     if not student:
@@ -219,12 +231,22 @@ def search_student2():
     return render_template("student/search_student.html")
 
 
+def create_number():
+    number = int(''.join(random.choices(string.digits, k=8)))
+    student = Student.query.filter(Student.code == number).first()
+    if student:
+        create_number()
+    else:
+        return number
+
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @student_bp.route('/upload/source/excel/',methods=["POST"])
+@login_required
 def upload_file():
 
     file = request.files['file']
@@ -239,14 +261,16 @@ def upload_file():
 
         try:
             for i in range(1,sheet_obj.max_row):
-                name = sheet_obj.cell(row=i+1, column=2).value
-                code = sheet_obj.cell(row=i+1, column=3).value
-                grade_name = sheet_obj.cell(row=i+1, column=4).value
-                grade = Grade.query.filter(Grade.name == grade_name).first()
+                f_name = sheet_obj.cell(row=i+1, column=2).value
+                s_name = sheet_obj.cell(row=i+1, column=1).value
+                grade = Grade.query.filter(Grade.name == "1.B").first()
 
-                s = Student(name,grade,code)
-                db_session.add(s)
-                db_session.commit()
+                name = f_name + " " + s_name
+                code = create_number()
+
+                n_student = Student(name,grade,code)
+                db_session.add(n_student)
+            db_session.commit()
         except:
             flash("Nastala chyba pri nahrávaní. Ujistite sa, či študenti z tabuľky nie su už v systéme", "danger")
             return redirect(url_for("student_bp.landing_page"))
