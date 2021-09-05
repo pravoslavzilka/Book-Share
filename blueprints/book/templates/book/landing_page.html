@@ -75,6 +75,7 @@
                           <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
                             Zadajte platného autora učebnice
                           </div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                           <button type="submit" class="btn btn-success float-right">Pridať</button>
                         </form>
 	            	  </div>
@@ -91,6 +92,7 @@
                           <div style="margin-top:-5px;" class="invalid-feedback">
                             Zadajte platného autora učebnice
                           </div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                           <button type="submit" class="btn btn-success float-right">Pridať</button>
 	            		</form>
 	            	  </div>
@@ -106,6 +108,7 @@
                           <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
                             Vyber platný súbor
                           </div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                           <button style="margin-top:10px;" type="submit" class="btn btn-success float-right">Načítať</button>
                         </form>
 	            	  </div>

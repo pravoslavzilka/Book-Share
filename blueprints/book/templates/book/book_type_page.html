@@ -71,6 +71,7 @@
                             <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
                               Zadajte kód učebnice
                             </div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                           <button type="submit" class="btn btn-success mb-2">Pridať</button>
 	            		</form>
 	            	  </div>
@@ -83,6 +84,7 @@
                           <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
                               Zadajte kód učebnice
                           </div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                           <button type="submit" class="btn btn-success mb-2">Pridať</button>
 	            		</form>
 	            	  </div>
@@ -188,6 +190,7 @@
               <div class="form-group d-none">
                 <input type="number" name="book_code" class="form-control">
               </div>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <button type="submit" class="btn btn-danger float-right">Odstrániť</button>
               <button type="button" class="btn btn-secondary float-right" style="margin-right:5px;" data-dismiss="modal">Zrušiť</button>
             </form>

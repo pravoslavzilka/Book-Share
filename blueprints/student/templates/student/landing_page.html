@@ -83,6 +83,7 @@
                         <option>{{ grade.name }}</option>
                       {% endfor %}
                     </select>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                   <button type="submit" class="btn btn-primary mb-2">Pridať</button>
 				</form>
 			  </div>
@@ -98,7 +99,7 @@
                     <input type="file" name="file" class="custom-file-input" id="customFile" required>
                     <label class="custom-file-label" for="customFile">Vyber súbor</label>
                   </div>
-
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                   <button style="margin-top:10px;" type="submit" class="btn btn-primary mb-2">Načítať</button>
 				</form>
 			  </div>

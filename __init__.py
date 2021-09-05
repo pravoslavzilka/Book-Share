@@ -3,7 +3,8 @@ from blueprints.admin.__init__ import admin_bp
 from blueprints.student.__init__ import student_bp
 from blueprints.book.__init__ import book_bp
 from database import db_session
-from flask_login import LoginManager, login_required
+from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 from models import User
 import os
 
@@ -18,12 +19,24 @@ app.register_blueprint(book_bp,url_prefix="/book")
 
 app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(16)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["REMEMBER_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["REMEMBER_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = 'Lax'
+
+csrf = CSRFProtect(app)
+UsersStatus = []
+
+app.jinja_env.autoescape = True | False
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "admin_bp.sign_in_page"
 login_manager.login_message = "Please sign in to access this page"
 login_manager.login_message_category = "info"
+login_manager.session_protection = "strong"
 
 
 @app.route("/")

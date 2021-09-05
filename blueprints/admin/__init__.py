@@ -30,6 +30,7 @@ def sign_in_page2():
 
 
 @admin_bp.route("/sign_out")
+@login_required
 def sign_out():
     logout_user()
     flash("Boli ste odhlásený","success")

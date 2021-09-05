@@ -82,6 +82,7 @@
                           Zadajte platné meno študenta
                         </div>
                       </div>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                       <div class="form-group row">
                         <label for="studentGrade" style="margin-right:-30px;" class="col-sm-3 col-form-label">Trieda</label>
                         <div class="col-sm-9">
@@ -105,6 +106,7 @@
                           Zadajte platný kód študenta
                         </div>
                       </div>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                       <div style="padding-top:15px;">
                           <button type="submit" class="btn btn-sm btn-success">Uložiť zmeny</button>
                           <button onclick="show('operation2')" class="btn btn-sm btn-secondary ">Vrátiť</button>
@@ -125,6 +127,8 @@
                           <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
                             Zadaj platný kód učebnice
                           </div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                           <button type="submit" class="btn btn-success mb-2">Pridať</button>
 	            		</form>
 	            	  </div>
@@ -137,6 +141,8 @@
                           <div style="margin-top:-5px;margin-bottom:10px;" class="invalid-feedback">
                             Zadaj platný kód učebnice
                           </div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                           <button type="submit" class="btn btn-success mb-2">Pridať</button>
 	            		</form>
 	            	  </div>
