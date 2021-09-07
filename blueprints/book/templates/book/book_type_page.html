@@ -187,8 +187,8 @@
 
             </div>
             <form method="post" action="{{ url_for('book_bp.delete_book') }}">
-              <div class="form-group d-none">
-                <input type="number" name="book_code" class="form-control">
+              <div class="form-group book-code-div d-none">
+                <input id="book_code" type="number" name="book_code" class="form-control">
               </div>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <button type="submit" class="btn btn-danger float-right">Odstrániť</button>
@@ -215,9 +215,10 @@
 
             </div>
             <form method="post" action="{{ url_for('book_bp.return_book_with_type') }}">
-              <div class="form-group d-none">
+              <div class="form-group book-code-div d-none">
                 <input type="number" name="book_code" class="form-control">
               </div>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <button type="submit" class="btn btn-info float-right">Vrátiť</button>
               <button type="button" class="btn btn-secondary float-right" style="margin-right:5px;" data-dismiss="modal">Zrušiť</button>
             </form>
@@ -237,7 +238,7 @@
 
           var modal = $(this)
           modal.find('.modal-body .main-text').text("Naozaj chcete odstrániť učebnicu s kódom " + recipient)
-          modal.find('.modal-body input').val(recipient)
+          modal.find('.modal-body .book-code-div input').val(recipient)
         })
 
 
@@ -248,7 +249,7 @@
 
           var modal = $(this)
           modal.find('.modal-body .main-text').text("Naozaj chcete vrátiť učebnicu s kódom " + recipient)
-          modal.find('.modal-body input').val(recipient)
+          modal.find('.modal-body .book-code-div input').val(recipient)
         })
 
 

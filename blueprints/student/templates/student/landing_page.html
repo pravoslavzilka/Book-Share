@@ -94,14 +94,23 @@
 			<div class="collapse " id="add-m-student">
 			  <div class="card card-body ">
                 <strong class="" style="padding-bottom:5px;font-size: 18px;">Načítať študentov z Excelu</strong>
-			    <form class="needs-validation" action="{{url_for('student_bp.upload_file')}}" enctype="multipart/form-data" method="post" style="margin-top:10px;">
-				  <div class="custom-file">
-                    <input type="file" name="file" class="custom-file-input" id="customFile" required>
-                    <label class="custom-file-label" for="customFile">Vyber súbor</label>
+                <form class="form-inline needs-validation " action="{{url_for('student_bp.upload_file')}}" enctype="multipart/form-data" method="post" style="margin-top:10px;">
+
+                  <div class="custom-file mb-2 mr-sm-2" style="width:350px;">
+                     <input type="file" name="file" class="custom-file-input" id="customFile" required>
+                     <label class="custom-file-label" for="customFile">Vyber súbor</label>
                   </div>
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                  <button style="margin-top:10px;" type="submit" class="btn btn-primary mb-2">Načítať</button>
-				</form>
+                  <div class="input-group mb-2 mr-sm-2">
+
+                    <select class="form-control" name="grade" style="width:100px;" required>
+                          {% for grade in grades %}
+                            <option>{{ grade.name }}</option>
+                          {% endfor %}
+                        </select>
+                  </div>
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                  <button type="submit" class="btn btn-primary mb-2">Submit</button>
+                </form>
 			  </div>
 			</div>
 

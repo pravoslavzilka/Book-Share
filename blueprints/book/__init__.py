@@ -275,21 +275,25 @@ def upload_file():
                     new_book = Book(code,book_type)
                     db_session.add(new_book)
                 elif name == ": Geografický atlas pre ZŠ a SŠ":
-                    book_type = BookType.query.filter(BookType.name == "Geografický atlas pre ZŠ a S").first()
+                    book_type = BookType.query.filter(BookType.name == "Geografický atlas pre ZŠ a SŠ").first()
                     if book_type:
                         new_book = Book(code, book_type)
                         db_session.add(new_book)
                     else:
-                        print("FAIL")
+                        print(name,"FAIL")
+
+                elif name == "Litetatúra 1 pre  SŠ":
+                    book_type = BookType.query.filter(BookType.name == "Litetatúra 1  pre  SŠ").first()
+                    if book_type:
+                        new_book = Book(code, book_type)
+                        db_session.add(new_book)
+                    else:
+                        print(name, "FAIL")
                 elif name == None:
                     pass
                 else:
-                    book_type = BookType.query.filter(BookType.id == 27).first()
-                    if book_type:
-                        new_book = Book(code, book_type)
-                        db_session.add(new_book)
-                    else:
-                        print("FAIL")
+                    print(name,"FAIL")
+
             db_session.commit()
         except:
             flash("Nastala chyba pri nahrávaní. Ujistite sa, či študenti z tabuľky nie su už v systéme", "danger")

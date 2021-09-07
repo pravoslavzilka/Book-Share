@@ -235,7 +235,7 @@ def create_number():
     number = int(''.join(random.choices(string.digits, k=8)))
     student = Student.query.filter(Student.code == number).first()
     if student:
-        create_number()
+        return create_number()
     else:
         return number
 
@@ -259,16 +259,18 @@ def upload_file():
         wb_obj = openpyxl.load_workbook(file)
         sheet_obj = wb_obj.active
 
+        grade_name = request.form["grade"]
+
         try:
             for i in range(1,sheet_obj.max_row):
-                f_name = sheet_obj.cell(row=i+1, column=2).value
-                s_name = sheet_obj.cell(row=i+1, column=1).value
-                grade = Grade.query.filter(Grade.name == "1.B").first()
+                s_name = sheet_obj.cell(row=i+1, column=2).value
+                s_code = sheet_obj.cell(row=i + 1, column=3).value
+                g_name = sheet_obj.cell(row=i+1, column=4).value
 
-                name = f_name + " " + s_name
-                code = create_number()
+                grade = Grade.query.filter(Grade.name == g_name).first()
+                # code = create_number()
 
-                n_student = Student(name,grade,code)
+                n_student = Student(s_name, grade, s_code)
                 db_session.add(n_student)
             db_session.commit()
         except:
