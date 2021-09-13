@@ -221,6 +221,24 @@ def add_book_type():
     return redirect(url_for("book_bp.landing_page"))
 
 
+@book_bp.route("/update/type/<int:type_id>/", methods=["POST"])
+@login_required
+def update_book_type(type_id):
+    book_type = BookType.query.filter(BookType.id == type_id).first()
+
+    if book_type:
+        n_name = request.form["book_type_name"]
+        n_author = request.form["book_type_author"]
+        book_type.name = n_name
+        book_type.author = n_author
+
+        db_session.commit()
+        flash(f"Učebnica '{book_type.name}' bola aktualizovaná.","success")
+        return redirect(url_for("book_bp.book_type_page", bt_name=book_type.name))
+    else:
+        return redirect(url_for("book_bp.landing_page"))
+
+
 @book_bp.route("/delete/type/<int:type_id>/")
 @login_required
 def delete_type(type_id):
@@ -239,7 +257,7 @@ def delete_type(type_id):
 
         db_session.delete(book_type)
         db_session.commit()
-        flash(f"Typ učebnice {book_type.name} bol úspešne vymazaný a s ním {count_of_books} učebníc","success")
+        flash(f"Typ učebnice '{book_type.name}' bol úspešne vymazaný a s ním {count_of_books} učebníc","success")
         return redirect(url_for("book_bp.landing_page"))
 
     flash("Neplataný kód", "danger")

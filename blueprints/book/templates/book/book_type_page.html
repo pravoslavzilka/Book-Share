@@ -15,13 +15,18 @@
 
     <style>
 
+        .book-type-card {
+            height:225px;
+        }
+
         @media only screen and (max-width: 700px) {
             .book-list {
                 margin-top:200px;
                 padding-top:15px;
             }
-            .student-card {
+            .book-type-card {
                 margin:10px;
+                height:260px;
             }
             .utilities-buttons {
                 display:none;
@@ -31,6 +36,7 @@
                 margin: auto;
                 width: 50%;
                 padding: 10px;
+                margin-top:35px;
             }
         }
 
@@ -41,26 +47,82 @@
 
     <div class="container" style="padding-top:100px;">
         <div class="row">
-            <div class="card student-card col-md-4 col-lg-4 col-sm-12 col-xs-12" style="height:215px;">
+            <div class="card book-type-card col-md-4 col-lg-4 col-sm-12 col-xs-12" >
               <div class="card-body">
-                <h3 class="card-title" >{{ book_type.name }}</h3>
-                <div>
+                <div id="operation2" style="display:none">
+                    <h3 class="card-title" >{{ book_type.name }}</h3>
                     <div>
-                        <h6 class="text-muted" style="margin-top:-7px;">{{ book_type.author }}</h6>
+                        <div>
+                            <h6 class="text-muted" style="margin-top:-7px;">{{ book_type.author }}</h6>
+                        </div>
+                        <div style="padding-top:3px;">
+                            <strong>Požičané:</strong>
+                            <label>{{ crbooks }}</label>
+                        </div>
+                        <div style="margin-top:-8px;">
+                            <strong>Na sklade: </strong>
+                            <label>{{ cfbooks }}</label>
+                        </div>
+                        <div style="margin-top:-8px;">
+                            <strong>Celkovo: </strong>
+                            <label>{{ ctbooks }}</label>
+                        </div>
                     </div>
-                    <div style="padding-top:3px;">
-                        <strong>Požičané:</strong>
-                        <label>{{ crbooks }}</label>
-                    </div>
-                    <div style="margin-top:-8px;">
-                        <strong>Na sklade: </strong>
-                        <label>{{ cfbooks }}</label>
-                    </div>
-                    <div style="margin-top:-8px;">
-                        <strong>Celkovo: </strong>
-                        <label>{{ ctbooks }}</label>
-                    </div>
+                    <button onclick="show('operation1')" style="margin-top:5px;" class="btn btn-sm btn-secondary ">Upraviť</button>
                 </div>
+                <div id="main_place">
+                    <h3 class="card-title" >{{ book_type.name }}</h3>
+                    <div>
+                        <div>
+                            <h6 class="text-muted" style="margin-top:-7px;">{{ book_type.author }}</h6>
+                        </div>
+                        <div style="padding-top:3px;">
+                            <strong>Požičané:</strong>
+                            <label>{{ crbooks }}</label>
+                        </div>
+                        <div style="margin-top:-8px;">
+                            <strong>Na sklade: </strong>
+                            <label>{{ cfbooks }}</label>
+                        </div>
+                        <div style="margin-top:-8px;">
+                            <strong>Celkovo: </strong>
+                            <label>{{ ctbooks }}</label>
+                        </div>
+                    </div>
+                    <button onclick="show('operation1')" style="margin-top:5px;" class="btn btn-sm btn-secondary ">Upraviť</button>
+                </div>
+                {% if current_user.is_authenticated %}
+                    <div id="operation1" style="display:none">
+                        <form method="post" class="needs-validation" action="{{ url_for('book_bp.update_book_type',type_id=book_type.id) }}">
+                          <h4 style="padding-bottom:10px;">Upraviť údaje:</h4>
+                          <div class="form-group row">
+                            <label for="studentName" style="margin-right:-30px;" class="col-sm-3 col-form-label">Názov</label>
+                            <div class="col-sm-9">
+                                <input oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" id="studentName" name="book_type_name" type="text" value="{{ book_type.name }}" class="form-control" placeholder="Názov" required>
+                                <div style="margin-left:10px;" class="invalid-feedback">
+                                  Zadajte platný názov učebnice
+                                </div>
+                            </div>
+
+                          </div>
+                          <div class="form-group row">
+                            <label for="bookAuthor" style="margin-right:-30px;" class="col-sm-3 col-form-label">Autor</label>
+                            <div class="col-sm-9">
+                                <input id="bookAuthor" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="50" name="book_type_author" type="text" value="{{ book_type.author }}" class="form-control" placeholder="Autor" required>
+                                <div class="invalid-feedback">
+                                  Zadajte platného autora učebnice
+                                </div>
+                            </div>
+                          </div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                          <div style="padding-top:15px;">
+                              <button type="submit" class="btn btn-sm btn-success">Uložiť zmeny</button>
+                              <button onclick="show('operation2')" class="btn btn-sm btn-secondary ">Vrátiť</button>
+                          </div>
+                        </form>
+
+                    </div>
+                {% endif %}
               </div>
               <div style="margin-top:35px;" class="d-flex justify-content-center">
 	            	<div class="collapse " id="new-book">
@@ -262,6 +324,23 @@
             });
           });
         });
+
+        function show(param_div_id) {
+          if (param_div_id === 'operation1') {
+            if ($(window).width() > 600) {
+                $(".book-type-card").css("height","245px");
+            } else {
+                $(".book-type-card").css("height","320px");
+            }
+          } else {
+            if ($(window).width() > 600) {
+                $(".book-type-card").css("height","225px");
+            } else {
+                $(".book-type-card").css("height","260px");
+            }
+          }
+          document.getElementById('main_place').innerHTML = document.getElementById(param_div_id).innerHTML;
+        }
 
         $(document).ready(function(){
 	     $('#add-book').on('click', function () {
