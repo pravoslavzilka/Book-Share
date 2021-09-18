@@ -231,7 +231,6 @@ def update_book_type(type_id):
         n_author = request.form["book_type_author"]
         book_type.name = n_name
         book_type.author = n_author
-
         db_session.commit()
         flash(f"Učebnica '{book_type.name}' bola aktualizovaná.","success")
         return redirect(url_for("book_bp.book_type_page", bt_name=book_type.name))

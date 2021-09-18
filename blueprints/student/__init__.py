@@ -19,7 +19,8 @@ UPLOAD_FOLDER = '/path/files'
 def landing_page():
     grades = Grade.query.all()
     students = Student.query.all()
-    return render_template("student/landing_page.html", grades=grades, students=students)
+    students_w_book = Student.query.filter(Student.books != None).all()
+    return render_template("student/landing_page.html", grades=grades, students=students, stac=len(students), stwbc=len(students_w_book))
 
 
 @student_bp.route("/grade/<grade>/")
@@ -29,18 +30,25 @@ def landing_page_grade(grade):
     cer_grade = Grade.query.filter(Grade.name == grade).first()
 
     if cer_grade:
-        flash(f"Zobrazujú sa študenti z ročníka {cer_grade.name}","info")
-        return render_template("student/landing_page.html", grades=grades, students=cer_grade.students)
+        stwbc = Student.query.filter(Student.grade == cer_grade, Student.books != None).all()
+        return render_template("student/class_page.html", grade=cer_grade, students=cer_grade.students, stwbc=len(stwbc))
     flash(f"Trieda {grade} neexistuje","danger")
     return redirect(url_for("student_bp.landing_page"))
+
+
+@student_bp.route("/list/")
+@login_required
+def student_list():
+    students = Student.query.all()
+    return render_template("student/student_list.html", students=students)
 
 
 @student_bp.route("/new_student/",methods=["POST"])
 @login_required
 def new_student():
-    name = request.form["student_name"]
-    code = request.form["student_code"]
-    s_grade = request.form["grade"]
+    name = request.form["student-name"]
+    s_grade = request.form["student-grade"]
+    code = create_number()
     grade = Grade.query.filter(Grade.name == s_grade).first()
     code_student = Student.query.filter(Student.code == code).first()
     if code_student:

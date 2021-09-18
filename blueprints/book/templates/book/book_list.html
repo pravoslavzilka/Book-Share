@@ -125,7 +125,7 @@
 
             </div>
             <form method="post" action="{{ url_for('book_bp.delete_book_from_list') }}">
-              <div class="form-group d-none">
+              <div class="form-group change-input d-none">
                 <input type="number" name="book_code" class="form-control">
               </div>
                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -153,7 +153,7 @@
 
             </div>
             <form method="post" action="{{ url_for('book_bp.return_book_from_list') }}">
-              <div class="form-group d-none">
+              <div class="form-group change-input d-none">
                 <input type="number" name="book_code" class="form-control">
               </div>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -176,7 +176,7 @@
 
           var modal = $(this)
           modal.find('.modal-body .main-text').text("Naozaj chcete odstrániť učebnicu s kódom " + recipient)
-          modal.find('.modal-body input').val(recipient)
+          modal.find('.modal-body .change-input input').val(recipient)
         })
 
 
@@ -187,7 +187,7 @@
 
           var modal = $(this)
           modal.find('.modal-body .main-text').text("Naozaj chcete vrátiť učebnicu s kódom " + recipient)
-          modal.find('.modal-body input').val(recipient)
+          modal.find('.modal-body .change-input input').val(recipient)
         })
 
         $(document).ready(function(){
