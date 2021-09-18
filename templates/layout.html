@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ 	<!DOCTYPE html>
 <html lang="en">
 <head>
 
@@ -12,6 +12,8 @@
     <!-- TITLE INFO -->
     <title>{% block title %}{% endblock title%}</title>
 
+	<!-- FAVICON -->
+	<link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
 
     <!-- CSS -->
     <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/main.css') }}">
