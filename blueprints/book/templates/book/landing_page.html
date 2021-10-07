@@ -125,19 +125,19 @@
                           </p>
                       </div>
                       <div id="operation1" style="display:none">
-                        <form class="needs-validation" action="{{ url_for('book_bp.upload_file') }}" method="post" style="margin-top:10px;" enctype="multipart/form-data" novalidate>
+                        <form id="excel-form" class="needs-validation" action="{{ url_for('book_bp.upload_file') }}" method="post" style="margin-top:10px;" enctype="multipart/form-data">
                           <div class="row">
                             <div style="padding-top:5px;" class="col">
                                 <label for="numStart" data-tip="tooltip" data-placement="top" title="Riadok kde začínajú dáta s knihamy">Prvý Riadok</label>
                             </div>
                             <div class="col">
-                              <input id="numStart" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                              <input id="numStart" type="number" name="start-row" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
                             </div>
                             <div style="padding-top:5px;" class="col">
                                 <label for="numName" data-tip="tooltip" data-placement="top" title="Stĺpec kde sa nachádza názov knihy">Stĺpec Názvu</label>
                             </div>
                             <div class="col">
-                              <input id="numName" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                              <input id="numName" name="col-name" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
                             </div>
                           </div>
                           <div style="padding-top:10px;" class="row">
@@ -145,17 +145,17 @@
                                 <label for="numAuthor" data-tip="tooltip" data-placement="bottom" title="Stĺpec kde sa nachádza autor">Stĺpec Autor</label>
                             </div>
                             <div class="col">
-                                <input id="numAuthor" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                                <input id="numAuthor" type="number" name="col-author" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
                             </div>
                             <div style="padding-top:5px;" class="col">
                                 <label for="numCode" data-tip="tooltip" data-placement="bottom" title="Stĺpec kde sa nachádza kód knihy">Stĺpec Kódu</label>
                             </div>
                             <div class="col">
-                                <input id="numCode" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                                <input id="numCode" type="number" name="col-code" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
                             </div>
                           </div>
                           <div class="form-check" style="padding-top:30px;">
-                              <input id="checkAuto" class="form-check-input" type="checkbox" checked="checked">
+                              <input id="checkAuto" class="form-check-input" type="checkbox" name="auto-fill" checked="checked">
                               <label for="checkAuto" class="form-check-label" data-tip="tooltip" data-placement="bottom" title="Ak kniha s daným názvom ešte nie je, vytvorí sa automaticky nová.">
                                 Vytvoriť nový typ pri nenájdenej zhode
                               </label>
@@ -176,7 +176,7 @@
                             <img src="{{ url_for('static',filename='images/help_icon.png') }}" height="25">
                         </button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavrieť</button>
-                        <button type="button" class="btn btn-primary">Načítať</button>
+                        <button type="submit" class="btn btn-primary" form="excel-form">Načítať</button>
                       </div>
                     </div>
                   </div>
@@ -198,7 +198,7 @@
                 </div>
 
                 <div id="myTable">
-                    {% if book_types %}
+                    {% if book_types != None %}
                         {% for book_type in book_types %}
                               <div style="margin-top:10px;" class="card">
                               <div class="card-body">

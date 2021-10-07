@@ -20,7 +20,6 @@ def landing_page():
     total_books = Book.query.count()
 
     book_types = BookType.query.all()
-
     return render_template("book/landing_page.html",books=books,book_types=book_types,
                            ctbooks=total_books,cfbooks=free_books,crbooks=rent_books
                            )
@@ -283,38 +282,50 @@ def upload_file():
         sheet_obj = wb_obj.active
 
         try:
-            for i in range(1,sheet_obj.max_row):
-                name = sheet_obj.cell(row=i+1, column=1).value
-                code = sheet_obj.cell(row=i+1, column=3).value
+            start_row = int(request.form["start-row"])
+            col_name = int(request.form["col-name"])
+            col_author = int(request.form["col-author"])
+            col_code = int(request.form["col-code"])
+
+            failed_items = 0
+            new_items = 0
+
+            for i in range(start_row-1,sheet_obj.max_row):
+                name = sheet_obj.cell(row=i+1, column=col_name).value
+                code = sheet_obj.cell(row=i+1, column=col_code).value
 
                 book_type = BookType.query.filter(BookType.name == name).first()
+                book = Book.query.filter(Book.code == code).first()
                 if book_type:
-                    new_book = Book(code,book_type)
-                    db_session.add(new_book)
-                elif name == ": Geografický atlas pre ZŠ a SŠ":
-                    book_type = BookType.query.filter(BookType.name == "Geografický atlas pre ZŠ a SŠ").first()
-                    if book_type:
-                        new_book = Book(code, book_type)
+                    if not book:
+                        new_book = Book(code,book_type)
                         db_session.add(new_book)
-                    else:
-                        print(name,"FAIL")
+                    failed_items += 1
 
-                elif name == "Litetatúra 1 pre  SŠ":
-                    book_type = BookType.query.filter(BookType.name == "Litetatúra 1  pre  SŠ").first()
-                    if book_type:
-                        new_book = Book(code, book_type)
-                        db_session.add(new_book)
-                    else:
-                        print(name, "FAIL")
-                elif name == None:
-                    pass
+                elif request.form.get("auto-fill") and col_name != "" and col_code != "" and col_author != "":
+                    author = sheet_obj.cell(row=i+1, column=col_author).value
+                    new_book_type = BookType(name,author)
+                    db_session.add(new_book_type)
+                    db_session.commit()
+
+                    new_book = Book(code,new_book_type)
+                    db_session.add(new_book)
+                    db_session.commit()
+                    new_items += 1
+
                 else:
-                    print(name,"FAIL")
+                    failed_items += 1
 
             db_session.commit()
         except:
-            flash("Nastala chyba pri nahrávaní. Ujistite sa, či študenti z tabuľky nie su už v systéme", "danger")
+            flash("Nastala chyba pri nahrávaní. Ujistite sa, či dáta z tabuľky nie su už v systéme", "danger")
             return redirect(url_for("book_bp.landing_page"))
+
+        if failed_items > 0 and request.form.get("auto-fill"):
+            flash(f"{failed_items} chybných/prázdnych/rovnakých riadkov nebolo nahratých","info")
+
+        if new_items > 0:
+            flash(f"{new_items} nových učebníc bolo pridaných","info")
 
         flash("Učebnice z execelu boli úspešne pridané","success")
         return redirect(url_for("book_bp.landing_page"))
