@@ -267,25 +267,39 @@ def upload_file():
         wb_obj = openpyxl.load_workbook(file)
         sheet_obj = wb_obj.active
 
-        grade_name = request.form["grade"]
-
         try:
-            for i in range(1,sheet_obj.max_row):
-                s_name = sheet_obj.cell(row=i+1, column=2).value
-                s_code = sheet_obj.cell(row=i + 1, column=3).value
-                g_name = sheet_obj.cell(row=i+1, column=4).value
+            start_row = int(request.form["start-row"])
+            col_name = int(request.form["col-name"])
+            col_grade = int(request.form["col-grade"])
 
-                grade = Grade.query.filter(Grade.name == g_name).first()
-                # code = create_number()
+            failed_items = 0
+            new_items = 0
 
-                n_student = Student(s_name, grade, s_code)
-                db_session.add(n_student)
+            for i in range(start_row-1,sheet_obj.max_row):
+                name = sheet_obj.cell(row=i+1, column=col_name).value
+                grade = sheet_obj.cell(row=i+1, column=col_grade).value
+                code = create_number()
+
+                grade_type = Grade.query.filter(Grade.name == grade).first()
+                if grade_type:
+                    new_student = Student(name, grade_type, code)
+                    db_session.add(new_student)
+                    new_items += 1
+                else:
+                    failed_items += 1
+
             db_session.commit()
         except:
-            flash("Nastala chyba pri nahrávaní. Ujistite sa, či študenti z tabuľky nie su už v systéme", "danger")
+            flash("Nastala chyba pri nahrávaní. Ujistite sa, či dáta z tabuľky nie su už v systéme", "danger")
             return redirect(url_for("student_bp.landing_page"))
 
-        flash("Študenti z execelu boli úspešne pridaný","success")
+        if failed_items > 0:
+            flash(f"{failed_items} chybných/prázdnych/rovnakých riadkov nebolo nahratých","info")
+
+        if new_items > 0:
+            flash(f"{new_items} nový študenti boli pridaný","info")
+
+        flash("Dáta z execelu boli úspešne pridané","success")
         return redirect(url_for("student_bp.landing_page"))
 
     allow_f_string = ' / '.join(map(str, ALLOWED_EXTENSIONS))

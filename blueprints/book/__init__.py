@@ -331,6 +331,5 @@ def upload_file():
         return redirect(url_for("book_bp.landing_page"))
 
     allow_f_string = ' / '.join(map(str, ALLOWED_EXTENSIONS))
-    flash(f"Súbor nie je podporovaný. Typ súboru musí byť: {allow_f_string}","danger")
+    flash(f"Súbor nie je podporovaný. Typ súboru musí byť: {allow_f_string}", "danger")
     return redirect(url_for("book_bp.landing_page"))
-

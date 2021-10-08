@@ -114,50 +114,44 @@
                           </p>
                           <ol style="margin-left:-20px;">
                              <li style="margin-top:5px;"><strong>Prvý riadok</strong> - číslo riadku od akého dáta začínajú</li>
-                             <li style="margin-top:5px;"><strong>Stĺpec Názvu</strong> - číslo stĺpcu na akom sa nachádza meno učebnice</li>
-                             <li style="margin-top:5px;"><strong>Stĺpec Autora</strong> - číslo stĺpcu na akom sa nachádza autor učebnice</li>
-                             <li style="margin-top:5px;"><strong>Stĺpec Kódu</strong> - číslo stĺpcu na akom sa nachádza kód učebnice</li>
+                             <li style="margin-top:5px;"><strong>Stĺpec Mena</strong> - číslo stĺpcu na akom sa nachádza meno študenta</li>
+                             <li style="margin-top:5px;"><strong>Stĺpec Triedy</strong> - číslo stĺpcu na akom sa nachádza trieda študenta</li>
+                             <li style="margin-top:5px;"><strong>Stĺpec Kódu</strong> - číslo stĺpcu na akom sa nachádza kód študenta</li>
                           </ol>
                           <p>
                               Podržte kurzor nad názvami aby sa zobrazil tooltip
                           </p>
                       </div>
                       <div id="operation1" style="display:none">
-                        <form class="needs-validation" action="{{ url_for('book_bp.upload_file') }}" method="post" style="margin-top:10px;" enctype="multipart/form-data" novalidate>
+                        <form class="needs-validation" id="excel-form" action="{{ url_for('student_bp.upload_file') }}" method="post" style="margin-top:10px;" enctype="multipart/form-data" novalidate>
                           <div class="row">
                             <div style="padding-top:5px;" class="col">
-                                <label for="numStart" data-tip="tooltip" data-placement="top" title="Riadok kde začínajú dáta s knihamy">Prvý Riadok</label>
+                                <label for="numStart" data-tip="tooltip" data-placement="top" title="Riadok kde začínajú dáta so študentami">Prvý Riadok</label>
                             </div>
                             <div class="col">
-                              <input id="numStart" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                              <input id="numStart" name="start-row" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
                             </div>
                             <div style="padding-top:5px;" class="col">
-                                <label for="numName" data-tip="tooltip" data-placement="top" title="Stĺpec kde sa nachádza názov knihy">Stĺpec Názvu</label>
+                                <label for="numName" data-tip="tooltip" data-placement="top" title="Stĺpec kde sa nachádza meno študenta">Stĺpec Mena</label>
                             </div>
                             <div class="col">
-                              <input id="numName" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                              <input id="numName" name="col-name" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
                             </div>
                           </div>
                           <div style="padding-top:10px;" class="row">
                             <div style="padding-top:5px;" class="col">
-                                <label for="numAuthor" data-tip="tooltip" data-placement="bottom" title="Stĺpec kde sa nachádza autor">Stĺpec Autor</label>
+                                <label for="numGrade" data-tip="tooltip" data-placement="bottom" title="Stĺpec kde sa nachádza názov triedy">Stĺpec Triedy</label>
                             </div>
                             <div class="col">
-                                <input id="numAuthor" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                                <input id="numGrade" name="col-grade" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
                             </div>
                             <div style="padding-top:5px;" class="col">
-                                <label for="numCode" data-tip="tooltip" data-placement="bottom" title="Stĺpec kde sa nachádza kód knihy">Stĺpec Kódu</label>
+                                <label for="numCode" data-tip="tooltip" data-placement="bottom" title="Stĺpec kde sa nachádza kód študenta">Stĺpec Kódu</label>
                             </div>
                             <div class="col">
-                                <input id="numCode" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
+                                <input id="numCode" name="col-code" type="number" oninput="this.value=this.value.slice(0,this.maxLength)" maxlength="2" class="form-control" required>
                             </div>
                           </div>
-                          <div class="form-check" style="padding-top:30px;">
-                              <input id="checkAuto" class="form-check-input" type="checkbox" checked="checked">
-                              <label for="checkAuto" class="form-check-label" data-tip="tooltip" data-placement="bottom" title="Ak kniha s daným názvom ešte nie je, vytvorí sa automaticky nová.">
-                                Vytvoriť nový typ pri nenájdenej zhode
-                              </label>
-                            </div>
                           <div class="custom-file" style="margin-top:20px;">
                             <input type="file" name="file" class="custom-file-input" id="customFile" required>
                             <label class="custom-file-label" for="customFile">Vyber súbor</label>
@@ -174,7 +168,7 @@
                             <img src="{{ url_for('static',filename='images/help_icon.png') }}" height="25">
                         </button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Zavrieť</button>
-                        <button type="button" class="btn btn-primary">Načítať</button>
+                        <button type="submit" class="btn btn-primary" form="excel-form">Načítať</button>
                       </div>
                     </div>
                   </div>
